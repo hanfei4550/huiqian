@@ -6,6 +6,7 @@ using System;
 using System.IO;
 public class HandWriteTool : MonoBehaviour
 {
+	
 	//根据标签查找物体坐标
 	public List<Record> WriteForFindTag(List<RAttribute> attrist,string filePath,string fileName )
 	{

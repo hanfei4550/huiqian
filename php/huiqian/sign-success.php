@@ -20,9 +20,39 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     <meta content="black" name="apple-mobile-web-app-status-bar-style"/>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/public.css">
+    <style>
+        #mobileMessage {
+            position: absolute;
+            z-index: 9999;
+        }
+
+        .top {
+            margin-bottom: 10px;
+        }
+
+        div.danmu-row {
+            float: right;
+            width: 200px;
+        }
+
+        span.danmu-image {
+            float: left;
+            width: 20%;
+            height: 30px;
+            text-align: center;
+        }
+
+        span.danmu-comment {
+            float: left;
+            width: 78%;
+            height: 50px;
+            background-color: gray;
+        }
+    </style>
     <title>会签—签到成功！</title>
 </head>
 <body>
+<div id="mobileMessage"></div>
 <div class="u_info">
     <span class="u_face"><img src="<?php echo $userInfo['headImage'] ?>"/></span>
     <span class="u_name"><?php echo $userInfo['nick'] ?></span>
@@ -40,15 +70,16 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 <div class="hq_set">
     <a href="###" class="s1"><i class="ico"></i><i class="il"></i>会议内容</a>
     <a href="###" class="s2"><i class="ico"></i><i class="il"></i>会议流程</a>
-    <a href="###" class="s3"><i class="ico"></i><i class="il"></i>参会企业</a>
+    <a href="###" class="s3" data-toggle="modal" data-target="#myModal"><i class="ico"></i><i class="il"></i>发表评论</a>
 </div>
-<div class="row" style="margin-top: 10px;">
+
+<!--<div class="row" style="margin-top: 10px;">
     <div class="col-md-4 col-xs-4"></div>
     <div class="col-md-8 col-xs-8">
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">发表评论</button>
     </div>
 </div>
-<!-- Modal -->
+ Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -78,7 +109,27 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         $(".hq_set a.s1 .il").height($(window).height() - $(".hq_set a.s1").offset().top - 66);
         $(".hq_set a.s2 .il").height($(window).height() - $(".hq_set a.s2").offset().top - 66);
         $(".hq_set a.s3 .il").height($(window).height() - $(".hq_set a.s3").offset().top - 66);
+        setInterval(getMobileMessage, 5000);
     });
+
+    function getMobileMessage() {
+        $.ajax({
+            url: "MobileMessageController.php",
+            data: {
+                "userId": 1,
+                "activityId": 1
+            },
+            method: "get",
+            dataType: "json",
+            success: function (result) {
+                $("#mobileMessage").empty();
+                $.each(result, function (i, msg) {
+                    var content = '<div class="row top"><div class="danmu-row"><span class="danmu-image"><img width="50" height="50" src="http://www.hn-coffeecat.cn/cmstest/images/huiqian/' + msg['headImage'] + '"/></span><span class="danmu-comment">' + msg['content'] + '</span></div></div>';
+                    $("#mobileMessage").append(content);
+                });
+            }
+        });
+    }
 
     function publishComment() {
         $.ajax({

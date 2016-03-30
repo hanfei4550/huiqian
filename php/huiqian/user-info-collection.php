@@ -5,6 +5,7 @@ $nick = "";
 $userId = "";
 $activityId = "";
 $headImage = "";
+$banner = "";
 if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 {
     if (isset($_GET["nick"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
@@ -22,6 +23,10 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     if (isset($_GET["headImage"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
     {
         $headImage = $_GET['headImage'];//存在
+    }
+    if (isset($_GET["banner"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
+    {
+        $banner = $_GET['banner'];//存在
     }
 }
 ?>
@@ -41,15 +46,15 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     <ul id="top_play" class="swiper-wrapper"
         style="transition-duration: 0ms; transform: translate3d(-5396px, 0px, 0px);">
         <li class="swiper-slide swiper-slide-duplicate" data-swiper-slide-index="2" style="width: 1349px;"><a
-                href="http://www.youku.com/"><img src="images/tmp2.jpg"></a></li>
+                href="javascript:void(0)"><img src="<?php echo $banner ?>"></a></li>
         <li class="swiper-slide" data-swiper-slide-index="0" style="width: 1349px;"><a
-                href="https://www.baidu.com/"><img src="images/tmp2.jpg"></a></li>
-        <li class="swiper-slide" data-swiper-slide-index="1" style="width: 1349px;"><a href="http://www.qq.com/"><img
-                    src="images/tmp2.jpg"></a></li>
+                href="javascript:void(0)"><img src="<?php echo $banner ?>"></a></li>
+        <li class="swiper-slide" data-swiper-slide-index="1" style="width: 1349px;"><a href="javascript:void(0)"><img
+                    src="<?php echo $banner ?>"></a></li>
         <li class="swiper-slide swiper-slide-prev" data-swiper-slide-index="2" style="width: 1349px;"><a
-                href="http://www.youku.com/"><img src="images/tmp2.jpg"></a></li>
+                href="javascript:void(0)"><img src="<?php echo $banner ?>"></a></li>
         <li class="swiper-slide swiper-slide-duplicate swiper-slide-active" data-swiper-slide-index="0"
-            style="width: 1349px;"><a href="https://www.baidu.com/"><img src="images/tmp2.jpg"></a></li>
+            style="width: 1349px;"><a href="javascript:void(0)"><img src="<?php echo $banner ?>"></a></li>
     </ul>
     <div class="swiper-pagination pager swiper-pagination-clickable" id="pager"><span
             class="swiper-pagination-bullet swiper-pagination-bullet-active"></span><span
@@ -91,7 +96,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         });
 
         //表单验证
-        var phone_reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+        var phone_reg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
         $(".sub_btn").click(function () {
             if ($("input[name=name]").val() == '') {
                 $("input[name=name]").siblings("label").fadeIn().fadeOut().fadeIn();

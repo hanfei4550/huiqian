@@ -63,10 +63,14 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 
         $userId = $activityInfo['user_id'];
         $activityId = $activityInfo['activity_id'];
+        $banner = $activityInfo['banner'];
 
         require_once(dirname(__FILE__) . "/" . "FansService.php");
         $fansService = new FansService();
-        $headImage = $fansService->getFansHeadPortraintByNick($nickname);
+        $fansInfo = $fansService->getFansHeadPortraintByNick($nickname);
+
+        $headImage = $fansInfo['headImage'];
+        $fansId = $fansInfo['fansId'];
 
 //        $secondCost = time() - $startTime;
 //        echo "getFansHeadPortraintByNick 耗费时间:".$secondCost;
@@ -98,10 +102,20 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 
 //            $sixCost = microtime() - $startTime;
 //            echo "insertUserActivityFans 耗费时间:".$sixCost;
+            header("Location: http://www.hn-coffeecat.cn/huiqian/user-info-collection.php?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImage . "&banner=" . $banner);
+            exit;
+        } else {
+            $orderNum = $fansService->getOrderNumByUser($userId, $activityId,$fansId);
+            $signResult = array();
+            $signResult['userId'] = $userId;
+            $signResult['activityId'] = $activityId;
+            $signResult['fansCount'] = $orderNum;
+            $signResult['nick'] = urlencode($nickname);
+            $signResult['headImage'] = "http://www.hn-coffeecat.cn/cmstest/images/huiqian/" . $headImage;
+            header("Location: http://www.hn-coffeecat.cn/huiqian/sign-success.php?userInfo=" . json_encode($signResult));
+            exit;
         }
 
-        header("Location: http://www.hn-coffeecat.cn/huiqian/user-info-collection.php?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImage);
-        exit;
     }
 }
 

@@ -154,9 +154,11 @@ ModuleList.prototype = {
                 "activityId": $("#activityId").val()
             },
             type: 'get',
+            dataType: 'json',
             success: function (data) {
                 YTMsg.info("添加黑名单成功!");
                 that.query(that.buildPageParams(), function (response) {
+
                 });
             },
             error: function (data) {
@@ -175,6 +177,7 @@ ModuleList.prototype = {
                 "id": id
             },
             type: 'get',
+            dataType: 'json',
             success: function (data) {
                 YTMsg.info("移除黑名单成功!");
                 that.query(that.buildPageParams(), function (response) {

@@ -38,19 +38,20 @@ class FansService
 
     function getFansHeadPortraintByNick($nick)
     {
+        $fansInfo = array();
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("select head_portraint from t_usercenter_fans where nick=?");
+        $stmt = $conn->prepare("select id,head_portraint from t_usercenter_fans where nick=?");
         $stmt->bind_param('s', $nick);
         $stmt->execute();
-        $stmt->bind_result($head_portraint);
-        $headImage = "";
+        $stmt->bind_result($fansId, $head_portraint);
         while ($stmt->fetch()) {
-            $headImage = $head_portraint;
+            $fansInfo['fansId'] = $fansId;
+            $fansInfo['headImage'] = $head_portraint;
         }
         $stmt->close();
         $conn->close();
-        return $headImage;
+        return $fansInfo;
     }
 
     function getFansIdByNick($nick)
@@ -229,11 +230,45 @@ class FansService
         return $messages;
     }
 
+
+    function getMobileFansMessage($user_id, $activity_id)
+    {
+        $messageResult = array();
+        $connManager = new ConnectionService();
+        $conn = $connManager->getConnection();
+        $stmt = $conn->prepare("SELECT m.id,nick,f.head_portraint,content FROM t_usercenter_fans_message m INNER JOIN t_usercenter_fans f ON m.fans_id= f.id WHERE user_id=? AND activity_id=? AND is_display_in_mobile=0 order by id asc limit 0,5");
+        $stmt->bind_param('dd', $user_id, $activity_id);
+        $stmt->execute();
+        $stmt->bind_result($id, $nick, $headImage, $content);
+        $messages = array();
+        while ($stmt->fetch()) {
+            $messageResult['id'] = $id;
+            $messageResult['nick'] = urlencode($nick);
+            $messageResult['headImage'] = $headImage;
+            $messageResult['content'] = urlencode($content);
+            $messages[] = $messageResult;
+        }
+        $stmt->close();
+        $conn->close();
+        return $messages;
+    }
+
     function updateFansMessage($id)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
         $stmt = $conn->prepare("update t_usercenter_fans_message set status=1  where id = ? and create_datetime <= now()");
+        $stmt->bind_param('d', $id);
+        $stmt->execute();
+        $stmt->close();
+        $conn->close();
+    }
+
+    function updateMobileFansMessage($id)
+    {
+        $connManager = new ConnectionService();
+        $conn = $connManager->getConnection();
+        $stmt = $conn->prepare("update t_usercenter_fans_message set is_display_in_mobile=1 where id = ?");
         $stmt->bind_param('d', $id);
         $stmt->execute();
         $stmt->close();
@@ -306,7 +341,7 @@ class FansService
         $picArray = array();
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT id,nick,name FROM t_usercenter_blacklist WHERE user_id=? AND activity_id=?");
+        $stmt = $conn->prepare("SELECT f.id,f.nick,f.name FROM t_usercenter_blacklist WHERE user_id=? AND activity_id=?");
         $stmt->bind_param('dd', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $name);

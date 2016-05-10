@@ -7,6 +7,8 @@
  */
 
 require_once(dirname(__FILE__) . "/" . "ConnectionService.php");
+define('HEAD_IMAGE_DIR', 'http://www.huiqian.me/huiqian/download/');
+define('DIRECTORY_SEPATRATOR', '/');
 
 class FansService
 {
@@ -14,17 +16,17 @@ class FansService
     {
         $myArray = array();
         $picArray = array();
-
+        $currentDate = date("Ymd");
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT f.id,f.nick,f.head_portraint FROM t_activitycenter_user_activity_fans uaf INNER JOIN t_usercenter_fans f ON uaf.fans_id= f.id WHERE user_id=? AND activity_id=? AND create_time < NOW() and status=0");
+        $stmt = $conn->prepare("SELECT f.id,f.nick,f.head_portraint FROM t_activitycenter_user_activity_fans uaf INNER JOIN t_usercenter_fans f ON uaf.fans_id= f.id WHERE user_id=? AND activity_id=? and status=0 order by create_time asc limit 0,30");
         $stmt->bind_param('ss', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $head_portraint);
 
         //先判断指定的路径是不是一个文件夹
         while ($stmt->fetch()) {
-            $filePath = "http://www.hn-coffeecat.cn/cmstest/images/huiqian/" . $head_portraint;
+            $filePath = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $head_portraint;
             $picArray["id"] = $id;
             $picArray["nick"] = $nick;
             $picArray["picUrl"] = $filePath;
@@ -36,13 +38,13 @@ class FansService
         return $myArray;
     }
 
-    function getFansHeadPortraintByNick($nick)
+    function getFansHeadPortraintByNick($nick, $userId, $activityId)
     {
         $fansInfo = array();
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("select id,head_portraint from t_usercenter_fans where nick=?");
-        $stmt->bind_param('s', $nick);
+        $stmt = $conn->prepare("select uf.id,uf.head_portraint from t_usercenter_fans uf INNER JOIN t_activitycenter_user_activity_fans uaf ON uf.id= uaf.fans_id where nick=? and uaf.user_id=? and uaf.activity_id=?");
+        $stmt->bind_param('sss', $nick, $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($fansId, $head_portraint);
         while ($stmt->fetch()) {
@@ -92,8 +94,21 @@ class FansService
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,create_time) values(?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
-        $stmt->bind_param('sss', $nick, $head_portraint, $head_portraint);
+        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,create_time) values(?,?,now()) ON DUPLICATE KEY UPDATE nick=?,head_portraint=?,create_time=now()");
+        $stmt->bind_param('ssss', $nick, $head_portraint, $nick, $head_portraint);
+        $stmt->execute();
+        $stmt->close();
+        $newId = mysqli_insert_id($conn);
+        $conn->close();
+        return $newId;
+    }
+
+    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone)
+    {
+        $connManager = new ConnectionService();
+        $conn = $connManager->getConnection();
+        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,create_time) values(?,?,?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
+        $stmt->bind_param('sss', $nick, $head_portraint, $name, $phone, $head_portraint);
         $stmt->execute();
         $stmt->close();
         $newId = mysqli_insert_id($conn);
@@ -132,6 +147,7 @@ class FansService
         return $userCount;
     }
 
+
     function insertUserActivityFans($userId, $activityId, $fansId, $orderNum)
     {
         $connManager = new ConnectionService();
@@ -153,8 +169,9 @@ class FansService
         $stmt->bind_param('ss', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $head_portraint);
+        $currentDate = date(Ymd);
         while ($stmt->fetch()) {
-            $filePath = "http://www.hn-coffeecat.cn/cmstest/images/huiqian/" . $head_portraint;
+            $filePath = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $head_portraint;
             $picArray['id'] = $id;
             $picArray["nick"] = urlencode($nick);
             $picArray["picUrl"] = $filePath;
@@ -175,8 +192,9 @@ class FansService
         $stmt->bind_param('ss', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($nick, $head_portraint);
+        $currentDate = date(Ymd);
         while ($stmt->fetch()) {
-            $filePath = "http://www.hn-coffeecat.cn/cmstest/images/huiqian/" . $head_portraint;
+            $filePath = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $head_portraint;
             $picArray["nick"] = urlencode($nick);
             $picArray["picUrl"] = $filePath;
             $myArray[] = $picArray;
@@ -214,7 +232,7 @@ class FansService
         $messageResult = array();
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT m.id,nick,content FROM t_usercenter_fans_message m INNER JOIN t_usercenter_fans f ON m.fans_id= f.id WHERE user_id=? AND activity_id=? AND  STATUS=0 AND create_datetime <= NOW()");
+        $stmt = $conn->prepare("SELECT m.id,nick,content FROM t_usercenter_fans_message m INNER JOIN t_usercenter_fans f ON m.fans_id= f.id WHERE user_id=? AND activity_id=? AND  STATUS=0 order by create_datetime ASC limit 0,5");
         $stmt->bind_param('dd', $user_id, $activity_id);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $content);
@@ -236,15 +254,16 @@ class FansService
         $messageResult = array();
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT m.id,nick,f.head_portraint,content FROM t_usercenter_fans_message m INNER JOIN t_usercenter_fans f ON m.fans_id= f.id WHERE user_id=? AND activity_id=? AND is_display_in_mobile=0 order by id asc limit 0,5");
+        $stmt = $conn->prepare("SELECT m.id,nick,f.head_portraint,content FROM t_usercenter_fans_message m INNER JOIN t_usercenter_fans f ON m.fans_id= f.id WHERE user_id=? AND activity_id=? AND create_datetime >= now()-interval 5 second order by id desc limit 0,5");
         $stmt->bind_param('dd', $user_id, $activity_id);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $headImage, $content);
         $messages = array();
+        $currentDate = date('Ymd');
         while ($stmt->fetch()) {
             $messageResult['id'] = $id;
             $messageResult['nick'] = urlencode($nick);
-            $messageResult['headImage'] = $headImage;
+            $messageResult['headImage'] = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $headImage;
             $messageResult['content'] = urlencode($content);
             $messages[] = $messageResult;
         }
@@ -341,7 +360,7 @@ class FansService
         $picArray = array();
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT f.id,f.nick,f.name FROM t_usercenter_blacklist WHERE user_id=? AND activity_id=?");
+        $stmt = $conn->prepare("SELECT id,nick,name FROM t_usercenter_blacklist WHERE user_id=? AND activity_id=?");
         $stmt->bind_param('dd', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $name);
@@ -350,6 +369,23 @@ class FansService
             $picArray["nick"] = urlencode($nick);
             $picArray["name"] = urlencode($name);
             $myArray[] = $picArray;
+        }
+        $stmt->close();
+        $conn->close();
+        return $myArray;
+    }
+
+    function getAllRegisterUserByActivity($activityId)
+    {
+        $myArray = array();
+        $connManager = new ConnectionService();
+        $conn = $connManager->getConnection();
+        $stmt = $conn->prepare("SELECT f.name,f.phone FROM t_activitycenter_fans as f WHERE f.activity_id=?");
+        $stmt->bind_param('s', $activityId);
+        $stmt->execute();
+        $stmt->bind_result($name, $phone);
+        while ($stmt->fetch()) {
+            $myArray[] = $name . ":" . $phone;
         }
         $stmt->close();
         $conn->close();

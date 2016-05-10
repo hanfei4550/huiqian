@@ -1,0 +1,95 @@
+* {
+    font-family: "Microsoft YaHei" ! important;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.activity-header {
+    height: 160px;
+    background-image: url('../images/海报背景.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.activity-content {
+    /*background-image: url('../images/活动说明背景.png');*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: center;*/
+    /*background-size: contain;*/
+    margin-left: 80px;
+    height: auto;
+}
+
+.activity-contact {
+    position: absolute;
+    margin-left: 480px;
+    height: 234px;
+    background-image: url('../images/索取步骤背景.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 999;
+}
+
+.activity-contact h5 {
+    text-align: center;
+}
+
+.activity-contact img {
+    margin: 0 auto;
+}
+
+.activity-contact h6 {
+    text-align: center;
+}
+
+.activity-contact ol {
+    width: 150px;
+    margin: 0 auto;
+}
+
+.activity-contact ol li h6 {
+    text-align: left;
+}
+
+.primary-desc {
+    color: orange;
+}
+
+.activity-content .row {
+    margin-top: 20px;
+}
+
+.activity-title {
+    color: orange;
+}
+
+.activity-time {
+    margin-left: 5px;
+}
+
+.activity-step img {
+    margin-left: 20px;
+}
+
+.activity-comment {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+    color: lightskyblue;
+}
+
+.activity-footer {
+    background-color: ghostwhite;
+}
+
+.activity-footer-logo {
+    padding: 20px;
+}
+
+.activity-footer div img {
+    cursor: pointer;
+}

@@ -8,9 +8,9 @@
  */
 class ConnectionService
 {
-    var $host = "localhost";
+    var $host = "127.0.0.1";
     var $userName = "root";
-    var $password = "hanfei";
+    var $password = "yzqs1605";
     var $dbName = "huiqian";
 
     function getConnection()

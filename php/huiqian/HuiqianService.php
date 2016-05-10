@@ -5,118 +5,123 @@
  * Date: 2015-10-31
  * Time: 23:16
  */
-$appId = "wxec230c866b34a22b";
-$appSecret = "d40a6ee899991f07763f9a44af53b584";
-
+//define('APP_ID', 'wxec230c866b34a22b');
+//define('APP_SECRET', 'd40a6ee899991f07763f9a44af53b584');
+define('CURREN_DIRECTORY_SEPATRATOR', '/');
+include('log4php/Logger.php');
+Logger::configure('log4php-config.xml');
+$log = Logger::getLogger('myLogger');
 if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 {
     $code = "";
     $state = "";
+    $type = "";
+    $is_danmu = "";
     if (isset($_GET["code"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
     {
         $code = $_GET['code'];//存在
     }
-
     if (isset($_GET["state"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
     {
         $state = $_GET['state'];//存在
     }
-//    echo $code . '<br/>';
-//    echo $state . '<br/>';
+    if (isset($_GET["isdanmu"]))//判断是否是弹幕互动产品
+    {
+        $is_danmu = $_GET['isdanmu'];//存在
+    }
     if ($code != "" && $state != "") {
-        require_once(dirname(__FILE__) . "/" . "FileUtils.php");
-        $fileUtils = new FileUtils();
-        //调用微信公众号获取token的接口，以便能够通过token获取到用户的基本信息
-        $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' . $appId . '&secret=' . $appSecret . '&code=' . $code . '&grant_type=authorization_code';
-        $tokenResult = $fileUtils->get_content($url);
-//        echo $tokenResult;
-        //解析token获取到access_token，openid和refresh_token
-//        $tokenResult = '{"access_token":"OezXcEiiBSKSxW0eoylIeDwHUOI1Hi8AbvaZb6k2FLQ21nnO4HneZSOJc71dnr8tb1GcIcrB6FtLzPXWEPtOvUIjW2x5GXrhJCwxU_JkAoX786p8xnvD74l9dEqWn8fL3YeVQWbyjEBVRh0IOjOdjQ","expires_in":7200,"refresh_token":"OezXcEiiBSKSxW0eoylIeDwHUOI1Hi8AbvaZb6k2FLQ21nnO4HneZSOJc71dnr8tRz5DOp6TNTWKVPBD_EPElI_n5k7ACBKY_i5Bjn-CYPAhC0nq2_45vX61EjZ0I6qr81GiuhzVBadpWUt9HDl7uA","openid":"oE3LPs3bF4hHGsPo7wEsOk3hBu_Q","scope":"snsapi_userinfo"}';
-        $token_json = json_decode($tokenResult, true);
-        $access_token = $token_json['access_token'];
-        $openid = $token_json['openid'];
-        $refresh_token = $token_json['refresh_token'];
+        require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "WXUtils.php");
 
-        //调用微信公众号获取用户信息接口获取昵称和头像
-        $url = 'https://api.weixin.qq.com/sns/userinfo?access_token=' . $access_token . '&openid=' . $openid . '&lang=zh_CN';
-        $userInfoResult = $fileUtils->get_content($url);
-//        echo $userInfoResult . '<br/>';
+        $wxUtils = new WXUtils();
 
-//        $userInfoResult = '{"openid":"oE3LPs3bF4hHGsPo7wEsOk3hBu_Q","nickname":"coffeecat","sex":1,"language":"zh_CN","city":"长沙","province":"湖南","country":"中国","headimgurl":"http:\/\/wx.qlogo.cn\/mmopen\/nibxxlib1VaPeAZCeY4P1R6c0RXhTUcejDhTooA1ianTABH48ia9dfAJFFJu7kicuNCBfGwVruUBN5Vewga8Kfzz7fId4w8SHf3Sb\/0","privilege":[]}';
-        $userinfo_json = json_decode($userInfoResult, true);
-        $nickname = $userinfo_json['nickname'];
-        $headimgurl = $userinfo_json['headimgurl'];
-        $headimgurl = $fileUtils->resizeHeadImageSize($headimgurl, 132);
+        $token_json = $wxUtils->getToken($code);
 
-        require_once(dirname(__FILE__) . "/" . "ActivityService.php");
-        $activityService = new ActivityService();
-        $startTime = time();
-        $activityInfo = $activityService->getCurrentActivity();
+        $userinfo_json = $wxUtils->getUserInfo($token_json);
 
-        if (count($activityInfo) == 0) {
-            header("Location: http://www.hn-coffeecat.cn/huiqian/no-activity.html");
+        if (!isset($userinfo_json['nickname'])) {
+            header($config['userinfo_get_error_url']);
             exit;
         }
+        $nickname = $userinfo_json['nickname'];
+        $nickname = translate_nick($nickname);
+        $log->warn("用户昵称:" . $nickname);
+        $headimgurl = $userinfo_json['headimgurl'];
+        $headimgurl = $wxUtils->resizeHeadImage($headimgurl);
 
-//        $firstCost = microtime() - $startTime;
-//        echo "getCurrentActivity 耗费时间:".$firstCost;
+        require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "ActivityService.php");
+        $activityService = new ActivityService();
+        $activityInfo = $activityService->getCurrentActivity();
+        $config = include(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "config.php");
+
+        if (count($activityInfo) == 0) {
+            header($config['no_activity_url']);
+            exit;
+        }
 
         $userId = $activityInfo['user_id'];
         $activityId = $activityInfo['activity_id'];
         $banner = $activityInfo['banner'];
-
-        require_once(dirname(__FILE__) . "/" . "FansService.php");
+        $isValidateUser = $activityInfo['is_validate_user'];
+        require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "FansService.php");
         $fansService = new FansService();
-        $fansInfo = $fansService->getFansHeadPortraintByNick($nickname);
-
+        $log->warn('比较结果:' . strcmp($nickname, 'AbcD '));
+        $fansInfo = $fansService->getFansHeadPortraintByNick($nickname, $userId, $activityId);
         $headImage = $fansInfo['headImage'];
         $fansId = $fansInfo['fansId'];
-
-//        $secondCost = time() - $startTime;
-//        echo "getFansHeadPortraintByNick 耗费时间:".$secondCost;
-
+        $log->warn("用户头像:" . $headImage . ";用户ID:" . $fansId);
+        $currentDate = date("Ymd");
         if (empty($headImage)) {
             //生成下载的文件名,并且将头像文件下载到本地
-            require_once(dirname(__FILE__) . "/" . "RandomUtils.php");
+            require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "RandomUtils.php");
             $randomUtils = new RandomUtils();
             $headImage = $randomUtils->generate_random() . '.jpg';
-            download_file_by_curl($headimgurl, "/var/www/html/cmstest/images/huiqian/" . $headImage);
-//            $fileUtils->download_remote_file($headimgurl, "/var/www/html/cmstest/images/huiqian/" . $headImage);
-//        $fileUtils->download_remote_file($headimgurl, "C:/Users/Administrator/PhpstormProjects/huiqian/download" . $fileName);
-//            $thirdCost = time() - $startTime;
-//            echo "download_remote_file 耗费时间:".$thirdCost;
 
-            //保存用户信息到用户表中
-            $fansId = $fansService->insertFans($nickname, $headImage);
+            $downloadDir = $config['image_download_dir_prefix'] . $currentDate;
+            if (!is_dir($downloadDir)) {
+                mkdir($downloadDir);
+                chmod($downloadDir, 0777);
+            }
 
-//            $fourthCost = microtime() - $startTime;
-//            echo "insertFans 耗费时间:".$fourthCost;
-            //获取用户的签到序号
-            $orderNum = $fansService->getUserCountByActivity($userId, $activityId);
+            download_file_by_curl($headimgurl, $downloadDir . CURREN_DIRECTORY_SEPATRATOR . $headImage);
 
-//            $fiveCost = microtime() - $startTime;
-//            echo "getUserCountByActivity 耗费时间:".$fiveCost;
+            if ($isValidateUser == $config['no_validate_user_flag']) {
+                //保存用户信息到用户表中
+                $fansId = $fansService->insertFans($nickname, $headImage);
 
-            //插入用户活动粉丝表
-            $fansService->insertUserActivityFans($userId, $activityId, $fansId, $orderNum);
+                //获取用户的签到序号
+                $orderNum = $fansService->getUserCountByActivity($userId, $activityId);
 
-//            $sixCost = microtime() - $startTime;
-//            echo "insertUserActivityFans 耗费时间:".$sixCost;
-            header("Location: http://www.hn-coffeecat.cn/huiqian/user-info-collection.php?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImage . "&banner=" . $banner);
-            exit;
+                //插入用户活动粉丝表
+                $fansService->insertUserActivityFans($userId, $activityId, $fansId, $orderNum);
+            }
+
+            if ($is_danmu == "true") {
+                $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate);
+                header($config['sign_success_url'] . "?userInfo=" . json_encode($signResult));
+                exit;
+            } else {
+                header($config['userinfo_collect_url'] . "?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImage . "&banner=" . $banner . "&isValidateUser=" . $isValidateUser);
+                exit;
+            }
         } else {
-            $orderNum = $fansService->getOrderNumByUser($userId, $activityId,$fansId);
-            $signResult = array();
-            $signResult['userId'] = $userId;
-            $signResult['activityId'] = $activityId;
-            $signResult['fansCount'] = $orderNum;
-            $signResult['nick'] = urlencode($nickname);
-            $signResult['headImage'] = "http://www.hn-coffeecat.cn/cmstest/images/huiqian/" . $headImage;
-            header("Location: http://www.hn-coffeecat.cn/huiqian/sign-success.php?userInfo=" . json_encode($signResult));
+            $orderNum = $fansService->getOrderNumByUser($userId, $activityId, $fansId);
+            $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate);
+            header($config['sign_success_url'] . "?userInfo=" . json_encode($signResult));
             exit;
         }
-
     }
+}
+
+
+function build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate)
+{
+    $signResult = array();
+    $signResult['userId'] = $userId;
+    $signResult['activityId'] = $activityId;
+    $signResult['fansCount'] = $orderNum;
+    $signResult['nick'] = urlencode($nickname);
+    $signResult['headImage'] = $config['image_get_url_prefix'] . $currentDate . CURREN_DIRECTORY_SEPATRATOR . $headImage;
+    return $signResult;
 }
 
 function http_get_data($url)
@@ -139,4 +144,30 @@ function download_file_by_curl($file_url, $save_to)
     $fp = @fopen($save_to, "a"); //将文件绑定到流
     fwrite($fp, $return_content); //写入文件
     fclose($fp);
+}
+
+function str_split_unicode($str, $l = 0)
+{
+    if ($l > 0) {
+        $ret = array();
+        $len = mb_strlen($str, "UTF-8");
+        for ($i = 0; $i < $len; $i += $l) {
+            $ret[] = mb_substr($str, $i, $l, "UTF-8");
+        }
+        return $ret;
+    }
+    return preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY);
+}
+
+function translate_nick($nickname)
+{
+    $resultNick = "";
+    $results = str_split_unicode($nickname);
+    $reg = '/[a-zA-Z0-9\[\]\x{4e00}-\x{9fa5}\s]+/u';
+    foreach ($results as $result) {
+        if (preg_match($reg, $result)) {
+            $resultNick = $resultNick . $result;
+        }
+    }
+    return $resultNick;
 }

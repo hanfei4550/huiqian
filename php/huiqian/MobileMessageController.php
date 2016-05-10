@@ -22,12 +22,12 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         require_once(dirname(__FILE__) . "/" . "FansService.php");
         $fansService = new FansService();
         $messageArray = $fansService->getMobileFansMessage($userId, $activityId);
-//        if (count($messageArray) > 0) {
-//            foreach ($messageArray as $message) {
-//                $id = $message["id"];
-//                $fansService->updateMobileFansMessage($id);
-//            }
-//        }
+        if (count($messageArray) > 0) {
+            foreach ($messageArray as $message) {
+                $id = $message["id"];
+                $fansService->updateMobileFansMessage($id);
+            }
+        }
         $resultMessage = json_encode($messageArray);
         echo urldecode($resultMessage);
     }

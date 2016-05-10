@@ -22,7 +22,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     if ($userId != "" && $activityId != "") {
         require_once(dirname(__FILE__) . "/" . "FansService.php");
         $fansService = new FansService();
-        $fansPicArray = $fansService->getNewSignPeople($userId, $activityId);
+        $fansPicArray = $fansService->getFansByUserAndActivity($userId, $activityId);
         if (count($fansPicArray) > 0) {
             foreach ($fansPicArray as $fansPic) {
                 $fansId = $fansPic["id"];

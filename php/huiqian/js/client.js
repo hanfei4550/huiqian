@@ -19,7 +19,7 @@ CHAT = {
         this.headImage = headImage;
 
         //连接websocket后端服务器
-        this.socket = io.connect('ws://120.26.231.8:3000');
+        this.socket = io.connect('ws://www.hn-coffeecat.cn:3000');
 
         //告诉服务器端有用户登录
         this.socket.emit('login', {userid: this.username, username: this.username});
@@ -27,6 +27,10 @@ CHAT = {
         //监听新用户登录
         this.socket.on('login', function (o) {
             console.log("用户登录")
+        });
+
+        this.socket.on('error', function () {
+            this.socket = io.connect('ws://www.hn-coffeecat.cn:3000');
         });
 
         //监听用户退出
@@ -52,7 +56,7 @@ CHAT = {
             var commentHeight = $(this).innerHeight();
             var commentTop = $(this).offset().top;
             var nextTop = commentTop - commentHeight;
-            $(this).animate({marginTop: nextTop}, 500, function () {
+            $(this).animate({marginTop: nextTop}, 1000, 'linear', function () {
                 if (nextTop < 0) {
                     $(this).remove();
                 }

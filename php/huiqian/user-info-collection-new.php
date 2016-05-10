@@ -6,6 +6,7 @@ $nick = "";
 $userId = "";
 $activityId = "";
 $headImage = "";
+$isValidateUser = "";
 if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 {
     if (isset($_GET["nick"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
@@ -23,6 +24,10 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     if (isset($_GET["headImage"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
     {
         $headImage = $_GET['headImage'];//存在
+    }
+    if (isset($_GET["isValidateUser"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
+    {
+        $isValidateUser = $_GET['isValidateUser'];//存在
     }
 }
 ?>
@@ -99,6 +104,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
             <input type="hidden" name="userId" value="<?php echo $userId ?>"/>
             <input type="hidden" name="activityId" value="<?php echo $activityId ?>"/>
             <input type="hidden" name="headImage" value="<?php echo $headImage ?>"/>
+            <input type="hidden" name="isValidateUser" value="<?php echo $isValidateUser ?>"/>
         </form>
     </div>
     <footer class="text-center">
@@ -143,7 +149,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 <script>
     $(function () {
         //表单验证
-        var phone_reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+        var phone_reg = /^(((13[0-9]{1})|(17[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
         $("button[type='submit']").click(function () {
             if ($("input[name='name']").val() == '') {
                 $('#emptyError').modal('show');

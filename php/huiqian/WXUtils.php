@@ -7,11 +7,13 @@
  * Time: 12:14
  */
 require_once(dirname(__FILE__) . "/" . "FileUtils.php");
+$config = include(dirname(__FILE__) . DIRECTORY_SEPARATOR . "config.php");
+$env = $config['env'];
 //define('APP_ID', 'wxec230c866b34a22b');
 //define('APP_SECRET', 'd40a6ee899991f07763f9a44af53b584');
 
-define('APP_ID', 'wx613472cd2a425abd');
-define('APP_SECRET', '7c607d6e08247bd8a49d6d850703a059');
+define('APP_ID', $config[$env . '.' . 'appid']);
+define('APP_SECRET', $config[$env . '.' . 'appsecret']);
 
 class WXUtils
 {

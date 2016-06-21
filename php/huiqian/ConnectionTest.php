@@ -8,12 +8,46 @@
 //为了解决方法调用传递中文参数乱码的问题
 header("Content-Type: text/html; charset=utf-8");
 
-require_once(dirname(__FILE__) . "/" . "FansService.php");
-require_once(dirname(__FILE__) . "/" . "ActivityService.php");
-$fansService = new FansService();
-$activityService = new ActivityService();
+function str_split_unicode($str, $l = 0)
+{
+    if ($l > 0) {
+        $ret = array();
+        $len = mb_strlen($str, "UTF-8");
+        for ($i = 0; $i < $len; $i += $l) {
+            $ret[] = mb_substr($str, $i, $l, "UTF-8");
+        }
+        return $ret;
+    }
+    return preg_split("//u", $str, -1, PREG_SPLIT_NO_EMPTY);
+}
 
-$userCount = $fansService->getUserCountByActivity(1,1);
+function translate_nick($nickname)
+{
+    $resultNick = "";
+    $results = str_split_unicode($nickname);
+    $reg = '/[a-zA-Z0-9\[\]\x{4e00}-\x{9fa5}\s]+/u';
+    foreach ($results as $result) {
+        if (preg_match($reg, $result)) {
+            $resultNick = $resultNick . $result;
+        }
+    }
+    return trim($resultNick, " ");
+}
+
+$s = ' 王清平';
+
+$nick = translate_nick($s);
+
+echo $nick;
+
+
+//require_once(dirname(__FILE__) . "/" . "FansService.php");
+//require_once(dirname(__FILE__) . "/" . "ActivityService.php");
+//$fansService = new FansService();
+//$activityService = new ActivityService();
+//
+//$activity = $activityService->getCurrentActivity();
+//echo $activity;
 
 //$fansService->insertFansMessage(4, '祝福他');
 //$messages = $fansService->getRecentFansMessage();
@@ -38,6 +72,4 @@ $userCount = $fansService->getUserCountByActivity(1,1);
 //$activity = $activityService->getCurrentActivity();
 //print_r($activity);
 
-//header("Location: http://www.hn-coffeecat.cn/huiqian/user-info.php?userId=$userId&activityId=$activityId&nick=".urlencode('韩飞'));
-//
 //exit;

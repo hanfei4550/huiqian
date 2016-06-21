@@ -7,30 +7,36 @@
  */
 //define('APP_ID', 'wxec230c866b34a22b');
 //define('APP_SECRET', 'd40a6ee899991f07763f9a44af53b584');
-define('CURREN_DIRECTORY_SEPATRATOR', '/');
 include('log4php/Logger.php');
 Logger::configure('log4php-config.xml');
 $log = Logger::getLogger('myLogger');
+$config = include(dirname(__FILE__) . DIRECTORY_SEPARATOR . "config.php");
 if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 {
     $code = "";
     $state = "";
     $type = "";
-    $is_danmu = "";
-    if (isset($_GET["code"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
+//    $is_danmu = "";
+    $activity_no = "";
+    if (isset($_GET["code"]))//微信网页授权之后传递的code
     {
         $code = $_GET['code'];//存在
     }
-    if (isset($_GET["state"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
+    if (isset($_GET["state"]))//微信网页授权传递的state
     {
         $state = $_GET['state'];//存在
     }
-    if (isset($_GET["isdanmu"]))//判断是否是弹幕互动产品
+//    if (isset($_GET["isdanmu"]))//判断是否是弹幕互动产品
+//    {
+//        $is_danmu = $_GET['isdanmu'];//存在
+//    }
+    if (isset($_GET["activityno"]))//获取活动号
     {
-        $is_danmu = $_GET['isdanmu'];//存在
+        $activity_no = $_GET['activityno'];//存在
     }
     if ($code != "" && $state != "") {
-        require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "WXUtils.php");
+
+        require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "WXUtils.php");
 
         $wxUtils = new WXUtils();
 
@@ -38,8 +44,10 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 
         $userinfo_json = $wxUtils->getUserInfo($token_json);
 
+        $env = $config['env'];
+
         if (!isset($userinfo_json['nickname'])) {
-            header($config['userinfo_get_error_url']);
+            header($config[$env . '.' . 'userinfo_get_error_url']);
             exit;
         }
         $nickname = $userinfo_json['nickname'];
@@ -48,23 +56,24 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         $headimgurl = $userinfo_json['headimgurl'];
         $headimgurl = $wxUtils->resizeHeadImage($headimgurl);
 
-        require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "ActivityService.php");
+        require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "ActivityService.php");
         $activityService = new ActivityService();
-        $activityInfo = $activityService->getCurrentActivity();
-        $config = include(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "config.php");
-
+        if ($activity_no != "") {
+            $activityInfo = $activityService->getActivityByActivityNo($activity_no);
+        } else {
+            $activityInfo = $activityService->getCurrentActivity();
+        }
         if (count($activityInfo) == 0) {
-            header($config['no_activity_url']);
+            header($config[$env . '.' . 'no_activity_url']);
             exit;
         }
-
         $userId = $activityInfo['user_id'];
         $activityId = $activityInfo['activity_id'];
         $banner = $activityInfo['banner'];
         $isValidateUser = $activityInfo['is_validate_user'];
-        require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "FansService.php");
+        $is_danmu = $activityInfo['is_danmu'];
+        require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "FansService.php");
         $fansService = new FansService();
-        $log->warn('比较结果:' . strcmp($nickname, 'AbcD '));
         $fansInfo = $fansService->getFansHeadPortraintByNick($nickname, $userId, $activityId);
         $headImage = $fansInfo['headImage'];
         $fansId = $fansInfo['fansId'];
@@ -72,21 +81,23 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         $currentDate = date("Ymd");
         if (empty($headImage)) {
             //生成下载的文件名,并且将头像文件下载到本地
-            require_once(dirname(__FILE__) . CURREN_DIRECTORY_SEPATRATOR . "RandomUtils.php");
+            require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "RandomUtils.php");
             $randomUtils = new RandomUtils();
             $headImage = $randomUtils->generate_random() . '.jpg';
 
-            $downloadDir = $config['image_download_dir_prefix'] . $currentDate;
+            $downloadDir = $config[$env . '.' . 'image_download_dir_prefix'] . $currentDate;
             if (!is_dir($downloadDir)) {
                 mkdir($downloadDir);
                 chmod($downloadDir, 0777);
             }
 
-            download_file_by_curl($headimgurl, $downloadDir . CURREN_DIRECTORY_SEPATRATOR . $headImage);
+            download_file_by_curl($headimgurl, $downloadDir . DIRECTORY_SEPARATOR . $headImage);
+
+            $headImageUrl = $config[$env . '.' . 'image_get_url_prefix'] . $currentDate . DIRECTORY_SEPARATOR . $headImage;
 
             if ($isValidateUser == $config['no_validate_user_flag']) {
                 //保存用户信息到用户表中
-                $fansId = $fansService->insertFans($nickname, $headImage);
+                $fansId = $fansService->insertFans($nickname, $headImageUrl);
 
                 //获取用户的签到序号
                 $orderNum = $fansService->getUserCountByActivity($userId, $activityId);
@@ -94,33 +105,34 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
                 //插入用户活动粉丝表
                 $fansService->insertUserActivityFans($userId, $activityId, $fansId, $orderNum);
             }
-
-            if ($is_danmu == "true") {
-                $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate);
-                header($config['sign_success_url'] . "?userInfo=" . json_encode($signResult));
+            $log->warn("是否弹幕活动:" . $is_danmu);
+            if ($is_danmu == "1") {
+                $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImageUrl, $config);
+                header($config[$env . '.' . 'sign_success_url'] . "?userInfo=" . json_encode($signResult));
                 exit;
             } else {
-                header($config['userinfo_collect_url'] . "?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImage . "&banner=" . $banner . "&isValidateUser=" . $isValidateUser);
+                header($config[$env . '.' . 'userinfo_collect_url'] . "?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImageUrl . "&banner=" . $banner . "&isValidateUser=" . $isValidateUser);
                 exit;
             }
         } else {
             $orderNum = $fansService->getOrderNumByUser($userId, $activityId, $fansId);
             $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate);
-            header($config['sign_success_url'] . "?userInfo=" . json_encode($signResult));
+            header($config[$env . '.' . 'sign_success_url'] . "?userInfo=" . json_encode($signResult));
             exit;
         }
     }
 }
 
 
-function build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate)
+function build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config)
 {
+    $env = $config['env'];
     $signResult = array();
     $signResult['userId'] = $userId;
     $signResult['activityId'] = $activityId;
     $signResult['fansCount'] = $orderNum;
     $signResult['nick'] = urlencode($nickname);
-    $signResult['headImage'] = $config['image_get_url_prefix'] . $currentDate . CURREN_DIRECTORY_SEPATRATOR . $headImage;
+    $signResult['headImage'] = $headImage;
     return $signResult;
 }
 
@@ -169,5 +181,5 @@ function translate_nick($nickname)
             $resultNick = $resultNick . $result;
         }
     }
-    return $resultNick;
+    return trim($resultNick, " ");
 }

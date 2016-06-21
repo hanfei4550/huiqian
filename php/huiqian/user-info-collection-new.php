@@ -93,6 +93,22 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
                 </div>
                 <div class="col-xs-1"></div>
             </div>
+            <div class="row text-center body-element">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10">
+                    <div class="input-group body-input-bg">
+                        <span class="input-group-addon"><img src="images/company.png"
+                                                             height="20px;"/></span>
+                        <input type="text"
+                               class="form-control"
+                               id="company"
+                               name="company"
+                               placeholder="输入公司名称">
+                        <!--                        <label class="err_tips">*输入不能为空</label>-->
+                    </div>
+                </div>
+                <div class="col-xs-1"></div>
+            </div>
             <div class="row text-center">
                 <div class="col-xs-1"></div>
                 <div class="col-xs-10">
@@ -157,6 +173,10 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
             }
             if ($("input[name='phone']").val() == '') {
                 $('#emptyError').modal('show');
+                return false;
+            }
+            if ($("input[name='company']").val() == '') {
+                alert("公司名称不能为空");
                 return false;
             }
             if (!phone_reg.test($("input[name='phone']").val())) {

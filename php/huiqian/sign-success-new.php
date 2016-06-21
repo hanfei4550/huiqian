@@ -153,7 +153,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 <!--[if lt IE 8]>
 <script src="//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
 <![endif]-->
-<script src="http://realtime.plhwin.com:3000/socket.io/socket.io.js"></script>
+<script src="js/socket.io.js"></script>
 <script src="js/client.js"></script>
 <script>
     $(function () {
@@ -171,6 +171,13 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         var nick = $("#nick").val();
         var headImage = $("#headImage").val();
         CHAT.init(nick, headImage);
+
+        var evt = "onorientationchange" in window ? "orientationchange" : "resize";
+        window.addEventListener(evt, function () {
+            alert("请使用竖屏显示.");
+            //event.stopPropagation();
+            //event.cancelBubble = true;
+        }, false);
     });
 
 

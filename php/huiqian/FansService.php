@@ -7,8 +7,6 @@
  */
 
 require_once(dirname(__FILE__) . "/" . "ConnectionService.php");
-define('HEAD_IMAGE_DIR', 'http://www.huiqian.me/huiqian/download/');
-define('DIRECTORY_SEPATRATOR', '/');
 
 class FansService
 {
@@ -26,10 +24,9 @@ class FansService
 
         //先判断指定的路径是不是一个文件夹
         while ($stmt->fetch()) {
-            $filePath = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $head_portraint;
             $picArray["id"] = $id;
             $picArray["nick"] = $nick;
-            $picArray["picUrl"] = $filePath;
+            $picArray["picUrl"] = $head_portraint;
             $myArray[] = $picArray;
         }
 
@@ -103,12 +100,12 @@ class FansService
         return $newId;
     }
 
-    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone)
+    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone, $company)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,create_time) values(?,?,?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
-        $stmt->bind_param('sss', $nick, $head_portraint, $name, $phone, $head_portraint);
+        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,company,create_time) values(?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
+        $stmt->bind_param('ssssss', $nick, $head_portraint, $name, $phone, $company, $head_portraint);
         $stmt->execute();
         $stmt->close();
         $newId = mysqli_insert_id($conn);
@@ -116,15 +113,12 @@ class FansService
         return $newId;
     }
 
-    function updateFans($name, $phone, $nick)
+    function updateFans($name, $phone, $nick, $company)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("update t_usercenter_fans set name=?,phone=? where nick=?");
-        //echo $name;
-        //echo $phone;
-        //echo $nick;
-        $stmt->bind_param('sss', $name, $phone, $nick);
+        $stmt = $conn->prepare("update t_usercenter_fans set name=?,phone=?,company=? where nick=?");
+        $stmt->bind_param('ssss', $name, $phone, $company, $nick);
         $stmt->execute();
         $stmt->close();
         $conn->close();
@@ -134,7 +128,7 @@ class FansService
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT COUNT(1) FROM t_activitycenter_user_activity_fans WHERE user_id=? AND activity_id=?");
+        $stmt = $conn->prepare("SELECT COUNT(1) FROM t_activitycenter_user_activity_fans WHERE user_id=? AND activity_id=? AND order_num is not null");
         $stmt->bind_param('ss', $userId, $activityId);
         $stmt->bind_result($count);
         $stmt->execute();
@@ -152,8 +146,8 @@ class FansService
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("insert into t_activitycenter_user_activity_fans(user_id,activity_id,fans_id,order_num) values(?,?,?,?)");
-        $stmt->bind_param('dddd', $userId, $activityId, $fansId, $orderNum);
+        $stmt = $conn->prepare("insert into t_activitycenter_user_activity_fans(user_id,activity_id,fans_id,order_num) values(?,?,?,?) ON DUPLICATE KEY UPDATE order_num=?");
+        $stmt->bind_param('ddddd', $userId, $activityId, $fansId, $orderNum, $orderNum);
         $stmt->execute();
         $stmt->close();
         $conn->close();
@@ -171,10 +165,9 @@ class FansService
         $stmt->bind_result($id, $nick, $head_portraint);
         $currentDate = date(Ymd);
         while ($stmt->fetch()) {
-            $filePath = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $head_portraint;
             $picArray['id'] = $id;
             $picArray["nick"] = urlencode($nick);
-            $picArray["picUrl"] = $filePath;
+            $picArray["picUrl"] = $head_portraint;
             $myArray[] = $picArray;
         }
         $stmt->close();
@@ -194,9 +187,8 @@ class FansService
         $stmt->bind_result($nick, $head_portraint);
         $currentDate = date(Ymd);
         while ($stmt->fetch()) {
-            $filePath = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $head_portraint;
             $picArray["nick"] = urlencode($nick);
-            $picArray["picUrl"] = $filePath;
+            $picArray["picUrl"] = $head_portraint;
             $myArray[] = $picArray;
         }
         $stmt->close();
@@ -263,7 +255,7 @@ class FansService
         while ($stmt->fetch()) {
             $messageResult['id'] = $id;
             $messageResult['nick'] = urlencode($nick);
-            $messageResult['headImage'] = HEAD_IMAGE_DIR . $currentDate . DIRECTORY_SEPATRATOR . $headImage;
+            $messageResult['headImage'] = $headImage;
             $messageResult['content'] = urlencode($content);
             $messages[] = $messageResult;
         }
@@ -391,4 +383,26 @@ class FansService
         $conn->close();
         return $myArray;
     }
+
+    function getAlreadySignPeople($activityNo)
+    {
+        $myArray = array();
+        $picArray = array();
+        $connManager = new ConnectionService();
+        $conn = $connManager->getConnection();
+        $stmt = $conn->prepare("SELECT f.nick,f.head_portraint FROM t_activitycenter_user_activity_fans uaf INNER JOIN t_usercenter_fans f ON uaf.fans_id= f.id inner join t_activitycenter_activity a on uaf.activity_id=a.id WHERE activity_no=? and uaf.status = 1");
+        $stmt->bind_param('s', $activityNo);
+        $stmt->execute();
+        $stmt->bind_result($nick, $head_portraint);
+        $currentDate = date('Ymd');
+        while ($stmt->fetch()) {
+            $picArray["nick"] = urlencode($nick);
+            $picArray["picUrl"] = $head_portraint;
+            $myArray[] = $picArray;
+        }
+        $stmt->close();
+        $conn->close();
+        return $myArray;
+    }
+
 }

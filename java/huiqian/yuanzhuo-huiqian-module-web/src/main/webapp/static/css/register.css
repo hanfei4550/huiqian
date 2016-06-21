@@ -1,0 +1,11 @@
+.register-header {
+    height: 160px;
+    background-image: url('../img/header-bg.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.register-content {
+    margin-top: 50px;
+}

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="head_portrait" property="headPortrait" jdbcType="VARCHAR"/>
+        <result column="weixin_name" property="weixinName" jdbcType="VARCHAR"/>
+        <result column="qr_code" property="qrCode" jdbcType="VARCHAR"/>
+        <result column="introduction" property="introduction" jdbcType="VARCHAR"/>
+        <result column="main_body" property="mainBody" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, name, head_portrait, weixin_name, qr_code, introduction, main_body
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_usercenter_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.User">
+    insert into t_usercenter_user (id, name, head_portrait, 
+      weixin_name, qr_code, introduction, 
+      main_body)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{headPortrait,jdbcType=VARCHAR}, 
+      #{weixinName,jdbcType=VARCHAR}, #{qrCode,jdbcType=VARCHAR}, #{introduction,jdbcType=VARCHAR}, 
+      #{mainBody,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yuanzhuo.huiqian.model.User">
+        insert into t_usercenter_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="headPortrait != null">
+                head_portrait,
+            </if>
+            <if test="weixinName != null">
+                weixin_name,
+            </if>
+            <if test="qrCode != null">
+                qr_code,
+            </if>
+            <if test="introduction != null">
+                introduction,
+            </if>
+            <if test="mainBody != null">
+                main_body,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="headPortrait != null">
+                #{headPortrait,jdbcType=VARCHAR},
+            </if>
+            <if test="weixinName != null">
+                #{weixinName,jdbcType=VARCHAR},
+            </if>
+            <if test="qrCode != null">
+                #{qrCode,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null">
+                #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="mainBody != null">
+                #{mainBody,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yuanzhuo.huiqian.model.User">
+        update t_usercenter_user
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="headPortrait != null">
+                head_portrait = #{headPortrait,jdbcType=VARCHAR},
+            </if>
+            <if test="weixinName != null">
+                weixin_name = #{weixinName,jdbcType=VARCHAR},
+            </if>
+            <if test="qrCode != null">
+                qr_code = #{qrCode,jdbcType=VARCHAR},
+            </if>
+            <if test="introduction != null">
+                introduction = #{introduction,jdbcType=VARCHAR},
+            </if>
+            <if test="mainBody != null">
+                main_body = #{mainBody,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yuanzhuo.huiqian.model.User">
+    update t_usercenter_user
+    set name = #{name,jdbcType=VARCHAR},
+      head_portrait = #{headPortrait,jdbcType=VARCHAR},
+      weixin_name = #{weixinName,jdbcType=VARCHAR},
+      qr_code = #{qrCode,jdbcType=VARCHAR},
+      introduction = #{introduction,jdbcType=VARCHAR},
+      main_body = #{mainBody,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

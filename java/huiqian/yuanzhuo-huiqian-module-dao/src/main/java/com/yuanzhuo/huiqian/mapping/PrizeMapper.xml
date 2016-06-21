@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.PrizeMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.Prize">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="code" property="code" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="prize_name" property="prizeName" jdbcType="VARCHAR"/>
+        <result column="prize_pic" property="prizePic" jdbcType="VARCHAR"/>
+        <result column="activity_id" property="activityId" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, code, name, prize_name, prize_pic,activity_id
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_activitycenter_prize
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByActivityId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_activitycenter_prize
+        where activity_id = #{activityId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_activitycenter_prize
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.Prize">
+    insert into t_activitycenter_prize (id, code, name, 
+      prize_name, prize_pic,activity_id)
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{prizeName,jdbcType=VARCHAR}, #{prizePic,jdbcType=VARCHAR},#{activityId,jdbcType=INTEGER})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yuanzhuo.huiqian.model.Prize">
+        insert into t_activitycenter_prize
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="prizeName != null">
+                prize_name,
+            </if>
+            <if test="prizePic != null">
+                prize_pic,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="prizeName != null">
+                #{prizeName,jdbcType=VARCHAR},
+            </if>
+            <if test="prizePic != null">
+                #{prizePic,jdbcType=VARCHAR},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yuanzhuo.huiqian.model.Prize">
+        update t_activitycenter_prize
+        <set>
+            <if test="code != null">
+                code = #{code,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="prizeName != null">
+                prize_name = #{prizeName,jdbcType=VARCHAR},
+            </if>
+            <if test="prizePic != null">
+                prize_pic = #{prizePic,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yuanzhuo.huiqian.model.Prize">
+    update t_activitycenter_prize
+    set code = #{code,jdbcType=INTEGER},
+      name = #{name,jdbcType=VARCHAR},
+      prize_name = #{prizeName,jdbcType=VARCHAR},
+      prize_pic = #{prizePic,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

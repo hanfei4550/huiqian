@@ -1,0 +1,565 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.yuanzhuo</groupId>
+    <artifactId>huiqian</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>huiqian</name>
+    <description>会签项目</description>
+
+    <!-- 模块定义 -->
+    <modules>
+        <module>yuanzhuo-huiqian-module-user</module>
+        <module>yuanzhuo-huiqian-module-activity</module>
+        <module>yuanzhuo-huiqian-module-pojo</module>
+        <module>yuanzhuo-huiqian-module-core</module>
+        <module>yuanzhuo-huiqian-module-util</module>
+        <module>yuanzhuo-huiqian-module-web</module>
+        <module>yuanzhuo-huiqian-module-provider</module>
+        <module>yuanzhuo-huiqian-module-consumer</module>
+        <module>yuanzhuo-huiqian-module-dao</module>
+        <module>yuanzhuo-huiqian-module-service</module>
+    </modules>
+
+    <!-- 属性定义，（模块版本管理） -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--项目版本定义-->
+        <project.version>1.0-SNAPSHOT</project.version>
+        <jdk.version>1.8</jdk.version>
+        <spring.version>4.1.4.RELEASE</spring.version>
+        <jackson.version>2.5.0</jackson.version>
+        <junit.version>4.12</junit.version>
+        <mybatis.version>3.2.8</mybatis.version>
+        <mybatis.pagnator.version>1.2.15</mybatis.pagnator.version>
+        <mybatis-spring.version>1.2.2</mybatis-spring.version>
+        <mysql.driver.version>5.1.34</mysql.driver.version>
+        <druid.version>1.0.12</druid.version>
+        <slf4j.version>1.7.2</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <servlet.version>2.5</servlet.version>
+        <jstl.version>1.2</jstl.version>
+        <json.version>1.9.13</json.version>
+        <fastjson.version>1.2.3</fastjson.version>
+        <aspectj.version>1.8.4</aspectj.version>
+        <aopalliance.version>1.0</aopalliance.version>
+        <commonio.version>2.4</commonio.version>
+        <common.fileupload.version>1.2.2</common.fileupload.version>
+        <!--<httpclient.version>4.1.3</httpclient.version>-->
+        <!--<logging.version>1.1.1</logging.version>-->
+        <dubbo.version>2.5.3</dubbo.version>
+        <jboss.netty.version>3.2.5.Final</jboss.netty.version>
+        <jedis.version>2.0.0</jedis.version>
+        <sitemesh.version>2.4.2</sitemesh.version>
+        <jsp.version>2.2</jsp.version>
+        <freemarker.version>2.3.19</freemarker.version>
+        <common.lang.version>2.6</common.lang.version>
+        <!--<maven.compiler.source>1.8</maven.compiler.source>-->
+        <!--<maven.compiler.target>1.8</maven.compiler.target>-->
+        <!--<p6spy.version>1.3</p6spy.version>-->
+        <!--<sqlprofiler.version>0.3</sqlprofiler.version>-->
+
+
+    </properties>
+
+    <!-- 依赖管理，所有引用的jar在这里定义 -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- 工程模块依赖 -->
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-pojo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-provider</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-consumer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-user</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-activity</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.yuanzhuo</groupId>
+                <artifactId>yuanzhuo-huiqian-module-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 第三方包依赖 -->
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>netty</artifactId>
+                        <groupId>org.jboss.netty</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>${jboss.netty.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+            <!-- spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>aopalliance</groupId>
+                <artifactId>aopalliance</artifactId>
+                <version>${aopalliance.version}</version>
+            </dependency>
+
+
+            <!-- mybatis 包 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.miemiedev</groupId>
+                <artifactId>mybatis-paginator</artifactId>
+                <version>${mybatis.pagnator.version}</version>
+            </dependency>
+
+            <!--mybatis spring 插件 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+
+            <!-- mysql连接 -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.driver.version}</version>
+            </dependency>
+
+            <!-- 数据源 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- log4j -->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <!-- servlet -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>jsp-api</artifactId>
+                <version>${jsp.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl.version}</version>
+                <!--<scope>provided</scope>-->
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+                <!--<scope>provided</scope>-->
+            </dependency>
+
+            <!--freemarker-->
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+
+            <!-- json -->
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>${json.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- 文件上传 -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commonio.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${common.fileupload.version}</version>
+            </dependency>
+
+            <!--sitemesh装饰框架-->
+            <dependency>
+                <groupId>opensymphony</groupId>
+                <artifactId>sitemesh</artifactId>
+                <version>${sitemesh.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${common.lang.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.8.3</version>
+            </dependency>
+
+            <!--单元测试-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+        </resources>
+        <!-- 预定义的插件管理 -->
+        <pluginManagement>
+            <plugins>
+                <!-- resources插件,设置了编码 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.4.3</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- compiler插件,设置了JDK版本与编码 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- JUnit插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.4.2</version>
+                    <configuration>
+                        <skipTests>false</skipTests>
+                        <testFailureIgnore>true</testFailureIgnore>
+                    </configuration>
+                </plugin>
+
+                <!--打war包插件-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.3</version>
+                    <configuration>
+                        <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                    </configuration>
+                </plugin>
+
+                <!-- source包发布插件 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- maven依赖管理插件,用于分析模块的依赖 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+
+
+                <!-- 部署至本机 -->
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>1.0</version>
+                    <configuration>
+                        <container>
+                            <containerId>tomcat7x</containerId>
+                            <home>/Users/hanfei/Downloads/apache-tomcat-7.0.68</home>
+                        </container>
+                        <configuration>
+                            <type>existing</type>
+                            <home>/Users/hanfei/Downloads/apache-tomcat-7.0.68</home>
+                        </configuration>
+                    </configuration>
+                </plugin>
+
+                <!-- jetty -->
+                <plugin>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>7.2.0.RC0</version>
+                    <configuration>
+                        <webAppConfig>
+                            <contextPath>/</contextPath>
+                        </webAppConfig>
+                        <scanIntervalSeconds>5</scanIntervalSeconds>
+                        <!--<encoding>${project.build.sourceEncoding}</encoding>-->
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <!--<scm>
+        <connection>scm:svn:http://192.168.100.249/usvn/svn/newsaleapi/trunk</connection>
+        <developerConnection>scm:svn:http://192.168.100.249/usvn/svn/newsaleapi/trunk</developerConnection>
+        <tag>HEAD</tag>
+    </scm>-->
+    <repositories>
+        <repository>
+            <id>nexus repository</id>
+            <name>intranet public groups</name>
+            <url>http://www.hn-coffeecat.cn:8081/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>snapshots repository</id>
+            <name>intranet public snapshots</name>
+            <url>http://www.hn-coffeecat.cn:8081/nexus/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>nexus repository</id>
+            <name>intranet public groups</name>
+            <url>http://www.hn-coffeecat.cn:8081/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <!-- 部署jar到nexus管理,需要在.m2/setting.xml的servers节点配置nexus账户. -->
+        <repository>
+            <id>nexus releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://www.hn-coffeecat.cn:8081/nexus/content/repositories/releases
+            </url>
+        </repository>
+
+        <snapshotRepository>
+            <id>nexus snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://www.hn-coffeecat.cn:8081/nexus/content/repositories/snapshots
+            </url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

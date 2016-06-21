@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.CommercialMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.Commercial">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="mch_id" property="mchId" jdbcType="INTEGER"/>
+        <result column="wx_appid" property="wxAppId" jdbcType="VARCHAR"/>
+        <result column="mch_name" property="mchName" jdbcType="VARCHAR"/>
+        <result column="nonce_str" property="nonceStr" jdbcType="VARCHAR"/>
+        <result column="secret" property="secret" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, mch_id, wx_appid, mch_name, nonce_str,user_id,secret
+  </sql>
+    <select id="selectByRelationId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_commercial
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.Commercial">
+    insert into t_usercenter_commercial (mch_id, wx_appid,
+      mch_name, nonce_str, user_id,secret)
+    values (#{mchId,jdbcType=INTEGER}, #{wxAppId,jdbcType=VARCHAR}, #{mchName,jdbcType=VARCHAR},
+      #{nonceStr,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},#{secret,jdbcType=VARCHAR})
+  </insert>
+</mapper>

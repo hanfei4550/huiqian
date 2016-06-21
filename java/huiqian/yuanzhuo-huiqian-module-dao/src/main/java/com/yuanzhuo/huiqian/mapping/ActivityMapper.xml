@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.ActivityMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.Activity">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="subject" property="subject" jdbcType="VARCHAR"/>
+        <result column="scale" property="scale" jdbcType="VARCHAR"/>
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="banner" property="banner" jdbcType="VARCHAR"/>
+        <result column="industry" property="industry" jdbcType="VARCHAR"/>
+        <result column="is_validate_user" property="isValidateUser" jdbcType="INTEGER"/>
+        <result column="functions" property="functions" jdbcType="VARCHAR"/>
+        <result column="activity_no" property="activityNo" jdbcType="VARCHAR"/>
+        <result column="packet_config" property="packetConfig" jdbcType="VARCHAR"/>
+        <result column="is_danmu" property="isDanmu" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, name, subject, scale, begin_time, end_time, banner,industry,is_validate_user,functions,activity_no,packet_config,is_danmu
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_activitycenter_activity
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--根据活动号查询活动-->
+    <select id="selectByActivityNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from t_activitycenter_activity
+        where activity_no = #{activityNo,jdbcType=INTEGER}
+    </select>
+
+    <!--查询所有的活动信息-->
+    <select id="selectAllActivity" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_activitycenter_activity order by id desc
+    </select>
+
+    <!--查询所有的活动数量信息-->
+    <select id="selectTotal" resultType="java.lang.Integer">
+        select
+        count(1)
+        from t_activitycenter_activity
+    </select>
+
+    <!--根据用户Id查询用户的活动信息-->
+    <select id="selectActivityByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        a.*
+        from t_activitycenter_activity a left join t_usercenter_user_activity b on a.id = b.activity_id
+        left join t_usercenter_member c on b.user_id = c.id where c.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--根据用户Id查询用户的活动总数-->
+    <select id="selectTotalByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select
+        count(1)
+        from t_activitycenter_activity a left join t_usercenter_user_activity b on a.id = b.activity_id
+        left join t_usercenter_member c on b.user_id = c.id where c.id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from t_activitycenter_activity
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.Activity">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+        insert into t_activitycenter_activity (name, subject,
+        scale, begin_time, end_time,
+        banner,industry,is_validate_user,functions,activity_no)
+        values (#{name,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR},
+        #{scale,jdbcType=VARCHAR}, #{beginTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+        #{banner,jdbcType=VARCHAR},#{industry,jdbcType=VARCHAR},#{isValidateUser,jdbcType=INTEGER},#{functions,jdbcType=VARCHAR},#{activityNo,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.yuanzhuo.huiqian.model.Activity">
+        insert into t_activitycenter_activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="subject != null">
+                subject,
+            </if>
+            <if test="scale != null">
+                scale,
+            </if>
+            <if test="beginTime != null">
+                begin_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="banner != null">
+                banner,
+            </if>
+            <if test="industry != null">
+                industry,
+            </if>
+            <if test="isValidateUser != null">
+                is_validate_user,
+            </if>
+            <if test="functions != null">
+                functions,
+            </if>
+            <if test="activityNo != null">
+                activity_no,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="subject != null">
+                #{subject,jdbcType=VARCHAR},
+            </if>
+            <if test="scale != null">
+                #{scale,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null">
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="banner != null">
+                #{banner,jdbcType=VARCHAR},
+            </if>
+            <if test="industry != null">
+                #{industry,jdbcType=VARCHAR},
+            </if>
+            <if test="isValidateUser != null">
+                #{is_validate_user,jdbcType=INTEGER},
+            </if>
+            <if test="functions != null">
+                #{functions,jdbcType=VARCHAR},
+            </if>
+            <if test="activityNo != null">
+                #{activity_no,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yuanzhuo.huiqian.model.Activity">
+        update t_activitycenter_activity
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="subject != null">
+                subject = #{subject,jdbcType=VARCHAR},
+            </if>
+            <if test="scale != null">
+                scale = #{scale,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null">
+                begin_time = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="banner != null">
+                banner = #{banner,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yuanzhuo.huiqian.model.Activity">
+        update t_activitycenter_activity
+        set name = #{name,jdbcType=VARCHAR},
+        subject = #{subject,jdbcType=VARCHAR},
+        scale = #{scale,jdbcType=VARCHAR},
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+        banner = #{banner,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

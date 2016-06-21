@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.FansMessageMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.FansMessage">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="fans_id" property="fansId" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="create_datetime" property="createDatetime" jdbcType="TIMESTAMP"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="activity_id" property="activityId" jdbcType="INTEGER"/>
+        <result column="is_display_in_mobile" property="isDisplayInMobile" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, fans_id, content, status, create_datetime, user_id, activity_id, is_display_in_mobile
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_fans_message
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_usercenter_fans_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByParams">
+        delete from t_usercenter_fans_message
+        where activity_id = #{activityId,jdbcType=INTEGER}
+        <if test="fansId != null and fansId != 0">
+            and fans_id = #{fansId,jdbcType=INTEGER}
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.FansMessage">
+    insert into t_usercenter_fans_message (id, fans_id, content, 
+      status, create_datetime, user_id, 
+      activity_id, is_display_in_mobile)
+    values (#{id,jdbcType=INTEGER}, #{fansId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{createDatetime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER}, 
+      #{activityId,jdbcType=INTEGER}, #{isDisplayInMobile,jdbcType=INTEGER})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yuanzhuo.huiqian.model.FansMessage">
+        insert into t_usercenter_fans_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="fansId != null">
+                fans_id,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createDatetime != null">
+                create_datetime,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+            <if test="isDisplayInMobile != null">
+                is_display_in_mobile,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="fansId != null">
+                #{fansId,jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createDatetime != null">
+                #{createDatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="isDisplayInMobile != null">
+                #{isDisplayInMobile,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yuanzhuo.huiqian.model.FansMessage">
+        update t_usercenter_fans_message
+        <set>
+            <if test="fansId != null">
+                fans_id = #{fansId,jdbcType=INTEGER},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createDatetime != null">
+                create_datetime = #{createDatetime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                activity_id = #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="isDisplayInMobile != null">
+                is_display_in_mobile = #{isDisplayInMobile,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yuanzhuo.huiqian.model.FansMessage">
+    update t_usercenter_fans_message
+    set fans_id = #{fansId,jdbcType=INTEGER},
+      content = #{content,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_datetime = #{createDatetime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=INTEGER},
+      is_display_in_mobile = #{isDisplayInMobile,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

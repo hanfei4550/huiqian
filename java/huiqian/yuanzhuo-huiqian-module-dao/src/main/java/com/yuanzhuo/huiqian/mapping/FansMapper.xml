@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.FansMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.Fans">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="nick" property="nick" jdbcType="VARCHAR"/>
+        <result column="head_portraint" property="headPortraint" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="INTEGER"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="company" property="company" jdbcType="VARCHAR"/>
+        <result column="job" property="job" jdbcType="VARCHAR"/>
+        <result column="area" property="area" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, nick, head_portraint, name, sex, phone, company, job, area, create_time
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_fans
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--根据活动Id查询参加活动的粉丝信息-->
+    <select id="selectFansByParams" resultMap="BaseResultMap">
+        select
+        a.*
+        from t_usercenter_fans a left join t_activitycenter_user_activity_fans b on a.id = b.fans_id
+        where b.activity_id = #{activityId,jdbcType=INTEGER}
+        <if test="nick != null and nick != ''">
+            and a.nick like CONCAT('%',#{nick,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <!--根据用户Id查询用户的活动总数-->
+    <select id="selectTotalByActivityId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select
+    count(1)
+    from t_usercenter_fans a left join t_activitycenter_user_activity_fans b on a.id = b.fans_id
+    where b.activity_id = #{activityId,jdbcType=INTEGER}
+  </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_usercenter_fans
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <delete id="deleteByActivityNo" parameterType="java.lang.String">
+    delete f from t_usercenter_fans f
+    where f.id in (select af.fans_id from t_activitycenter_user_activity_fans af LEFT JOIN t_activitycenter_activity a on a.id = af.activity_id where a.activity_no=#{activityNo,jdbcType=VARCHAR})
+    </delete>
+
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.Fans">
+    insert into t_usercenter_fans (id, nick, head_portraint, 
+      name, sex, phone, company, 
+      job, area, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{nick,jdbcType=VARCHAR}, #{headPortraint,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, 
+      #{job,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.yuanzhuo.huiqian.model.Fans">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+        insert into t_usercenter_fans
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="nick != null">
+                nick,
+            </if>
+            <if test="headPortraint != null">
+                head_portraint,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="company != null">
+                company,
+            </if>
+            <if test="job != null">
+                job,
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="nick != null">
+                #{nick,jdbcType=VARCHAR},
+            </if>
+            <if test="headPortraint != null">
+                #{headPortraint,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="company != null">
+                #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="job != null">
+                #{job,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yuanzhuo.huiqian.model.Fans">
+        update t_usercenter_fans
+        <set>
+            <if test="nick != null">
+                nick = #{nick,jdbcType=VARCHAR},
+            </if>
+            <if test="headPortraint != null">
+                head_portraint = #{headPortraint,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="company != null">
+                company = #{company,jdbcType=VARCHAR},
+            </if>
+            <if test="job != null">
+                job = #{job,jdbcType=VARCHAR},
+            </if>
+            <if test="area != null">
+                area = #{area,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yuanzhuo.huiqian.model.Fans">
+    update t_usercenter_fans
+    set nick = #{nick,jdbcType=VARCHAR},
+      head_portraint = #{headPortraint,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      company = #{company,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

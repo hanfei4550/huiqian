@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.WhiteListMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.WhiteList">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="fans_id" property="fansId" jdbcType="INTEGER"/>
+        <result column="fans_nick" property="fansNick" jdbcType="VARCHAR"/>
+        <result column="prize_code" property="prizeCode" jdbcType="INTEGER"/>
+        <result column="activity_id" property="activityId" jdbcType="INTEGER"/>
+        <association property="fans" column="fans_id" javaType="com.yuanzhuo.huiqian.model.Fans"
+                     select="com.yuanzhuo.huiqian.dao.FansMapper.selectByPrimaryKey"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, fans_id, fans_nick, prize_code, activity_id
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_whitelist
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByActivityId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_whitelist
+        where activity_id = #{activityId,jdbcType=INTEGER}
+    </select>
+    <select id="selectByParams" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_usercenter_whitelist
+        where activity_id = #{activityId,jdbcType=INTEGER} and fans_id=#{fansId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_usercenter_whitelist
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByParams">
+        delete from t_usercenter_whitelist
+        where activity_id = #{activityId,jdbcType=INTEGER}
+        <if test="fansId != null and fansId != 0">
+            and fans_id = #{fansId,jdbcType=INTEGER}
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.WhiteList">
+    insert into t_usercenter_whitelist (id, fans_id, fans_nick, 
+      prize_code, activity_id)
+    values (#{id,jdbcType=INTEGER}, #{fansId,jdbcType=INTEGER}, #{fansNick,jdbcType=VARCHAR}, 
+      #{prizeCode,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER})
+  </insert>
+    <insert id="insertSelective" parameterType="com.yuanzhuo.huiqian.model.WhiteList">
+        insert into t_usercenter_whitelist
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="fansId != null">
+                fans_id,
+            </if>
+            <if test="fansNick != null">
+                fans_nick,
+            </if>
+            <if test="prizeCode != null">
+                prize_code,
+            </if>
+            <if test="activityId != null">
+                activity_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="fansId != null">
+                #{fansId,jdbcType=INTEGER},
+            </if>
+            <if test="fansNick != null">
+                #{fansNick,jdbcType=VARCHAR},
+            </if>
+            <if test="prizeCode != null">
+                #{prizeCode,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                #{activityId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yuanzhuo.huiqian.model.WhiteList">
+        update t_usercenter_whitelist
+        <set>
+            <if test="fansId != null">
+                fans_id = #{fansId,jdbcType=INTEGER},
+            </if>
+            <if test="fansNick != null">
+                fans_nick = #{fansNick,jdbcType=VARCHAR},
+            </if>
+            <if test="prizeCode != null">
+                prize_code = #{prizeCode,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null">
+                activity_id = #{activityId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yuanzhuo.huiqian.model.WhiteList">
+    update t_usercenter_whitelist
+    set fans_id = #{fansId,jdbcType=INTEGER},
+      fans_nick = #{fansNick,jdbcType=VARCHAR},
+      prize_code = #{prizeCode,jdbcType=INTEGER},
+      activity_id = #{activityId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

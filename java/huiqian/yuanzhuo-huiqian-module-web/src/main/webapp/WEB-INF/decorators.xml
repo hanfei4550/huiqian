@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/decorators">
+    <decorator name="layout_menu" page="main_layout.jsp">
+        <pattern>/*</pattern>
+    </decorator>
+
+    <!--<decorator name="common_menu" page="common_layout.jsp">-->
+    <!--<pattern>/result.jsp</pattern>-->
+    <!--</decorator>-->
+
+    <excludes>
+        <pattern>/index.jsp</pattern>
+        <pattern>/login.jsp</pattern>
+        <pattern>/register.jsp</pattern>
+        <pattern>/result.jsp*</pattern>
+        <pattern>/member/save.htmls</pattern>
+        <pattern>/member/query*</pattern>
+        <pattern>/fans/page*</pattern>
+        <pattern>/activity/member/upload.htmls</pattern>
+    </excludes>
+</decorators>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yuanzhuo.huiqian.dao.PacketMapper">
+    <resultMap id="BaseResultMap" type="com.yuanzhuo.huiqian.model.Packet">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="bill_no" property="billNo" jdbcType="VARCHAR"/>
+        <result column="hb_type" property="hbType" jdbcType="VARCHAR"/>
+        <result column="total_amount" property="totalAmount" jdbcType="INTEGER"/>
+        <result column="total_num" property="totalNum" jdbcType="INTEGER"/>
+        <result column="wishing" property="wishing" jdbcType="VARCHAR"/>
+        <result column="act_name" property="actName" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="risk_cntl" property="riskCntl" jdbcType="VARCHAR"/>
+        <result column="packet" property="packet" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="commercial_id" property="commercialId" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, bill_no, packet, create_time, commercial_id
+  </sql>
+    <select id="selectByRelationId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from t_activitycenter_packet
+        where commercial_id = #{commercialId,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.Packet">
+    insert into t_activitycenter_packet (bill_no, hb_type,
+      total_amount, total_num, wishing,act_name,remark,risk_cntl,packet,create_time,commercial_id)
+    values (#{billNo,jdbcType=INTEGER}, #{hbType,jdbcType=VARCHAR}, #{totalAmount,jdbcType=INTEGER},
+      #{totalNum,jdbcType=INTEGER}, #{wishing,jdbcType=VARCHAR},#{actName,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{riskCntl,jdbcType=VARCHAR},#{packet,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{commercialId,jdbcType=INTEGER})
+  </insert>
+</mapper>

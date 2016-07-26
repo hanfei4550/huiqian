@@ -65,6 +65,13 @@ public class WhiteListServiceImpl implements WhiteListService {
         return whiteListMapper.deleteByParams(params);
     }
 
+    @Override
+    public void deleteByActivityId(int activityId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("activityId", activityId);
+        whiteListMapper.deleteByParams(params);
+    }
+
     private String getPrizeName(List<Prize> prizes, int prizeCode) {
         for (Prize prize : prizes) {
             if (prize.getCode().intValue() == prizeCode) {

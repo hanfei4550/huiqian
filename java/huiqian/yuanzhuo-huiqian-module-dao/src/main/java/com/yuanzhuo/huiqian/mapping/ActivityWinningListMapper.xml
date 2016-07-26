@@ -27,6 +27,10 @@
     delete from t_activitycenter_activity_winninglist
     where id = #{id,jdbcType=INTEGER}
   </delete>
+    <delete id="deleteByRelationId" parameterType="java.lang.Integer">
+        delete from t_activitycenter_activity_winninglist
+        where activity_id = #{activityId,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.ActivityWinningList">
     insert into t_activitycenter_activity_winninglist (id, activity_id, nick, 
       prize_code, prize_name)

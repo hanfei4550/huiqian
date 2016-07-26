@@ -20,4 +20,6 @@ public interface FansMapper {
     List<Fans> selectFansByActivityId(int activityId);
 
     int deleteByActivityNo(String activityNo);
+
+    void deleteByRelationId(int activityId);
 }

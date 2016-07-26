@@ -29,6 +29,13 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     {
         $isValidateUser = $_GET['isValidateUser'];//存在
     }
+    if ($activityId == "23") {
+        $title = "菁英时代";
+        $header_bg = "http://www.huiqian.me/huiqian/images/header_jingying_bg.png";
+    } else {
+        $title = "会签";
+        $header_bg = "http://www.huiqian.me/huiqian/images/header_huiqian_bg.jpg";
+    }
 }
 ?>
 <head>
@@ -37,7 +44,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>用户信息</title>
+    <title><?php echo $title ?></title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -53,15 +60,16 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 <div class="container-fluid">
     <div class="header">
         <div class="row">
-            <div class="col-xs-12 header-bg">
-            </div>
+            <!--            <div class="col-xs-12 header-bg">-->
+            <!--            </div>-->
+            <img src="<?php echo $header_bg ?>" width="100%"/>
         </div>
     </div>
     <div class="body clearfix" style="min-height: 400px;">
         <form id="userinfoForm" method="post" action="UserService.php">
-            <div class="row text-center body-element">
+            <div class="row text-center body-element hint">
                 <div class="col-xs-1"></div>
-                <div class="col-xs-10"><span><img src="images/body-info-bg.png"/></span><span>需要完善以下信息,才能完成签到!</span>
+                <div class="col-xs-10"><span><img src="images/hint.png" width="15px;"/></span><span>请完成签到,惊喜等着您.</span>
                 </div>
                 <div class="col-xs-1"></div>
             </div>
@@ -71,7 +79,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
                     <div class="input-group body-input-bg">
                         <span class="input-group-addon"><img
                                 src="images/body-input-name-bg.png" height="20px;"/></span>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="输入您的姓名">
+                        <input type="text" class="form-control input-lg" id="name" name="name" placeholder="输入您的姓名">
                         <!--                        <label class="err_tips">*输入不能为空</label>-->
                     </div>
                 </div>
@@ -84,7 +92,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
                         <span class="input-group-addon"><img src="images/body-input-phone-bg.png"
                                                              height="20px;"/></span>
                         <input type="text"
-                               class="form-control"
+                               class="form-control input-lg"
                                id="phone"
                                name="phone"
                                placeholder="输入11位手机号">
@@ -97,22 +105,38 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
                 <div class="col-xs-1"></div>
                 <div class="col-xs-10">
                     <div class="input-group body-input-bg">
-                        <span class="input-group-addon"><img src="images/company.png"
-                                                             height="20px;"/></span>
+                                                <span class="input-group-addon"><img src="images/company.png"
+                                                                                     height="20px;"/></span>
                         <input type="text"
-                               class="form-control"
+                               class="form-control input-lg"
                                id="company"
                                name="company"
                                placeholder="输入公司名称">
-                        <!--                        <label class="err_tips">*输入不能为空</label>-->
                     </div>
                 </div>
                 <div class="col-xs-1"></div>
             </div>
-            <div class="row text-center">
+            <!--                        <div class="row text-center body-element">-->
+            <!--                            <div class="col-xs-1"></div>-->
+            <!--                            <div class="col-xs-10">-->
+            <!--                                <div class="input-group body-input-bg">-->
+            <!--                                    <span class="input-group-addon"><img src="images/job.png"-->
+            <!--                                                                         height="20px;"/></span>-->
+            <!--                                    <input type="text"-->
+            <!--                                           class="form-control input-lg"-->
+            <!--                                           id="job"-->
+            <!--                                           name="job"-->
+            <!--                                           placeholder="输入职务">-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            <!--                            <div class="col-xs-1"></div>-->
+            <!--                        </div>-->
+            <div class="row text-center body-submit">
                 <div class="col-xs-1"></div>
                 <div class="col-xs-10">
-                    <button type="submit" class="btn btn-primary center-block" style="width:100%">提交</button>
+                    <button type="button" name="btnSubmit" class="btn btn-primary center-block btn-lg"
+                            style="width:100%">提交
+                    </button>
                 </div>
                 <div class="col-xs-1"></div>
             </div>
@@ -128,62 +152,99 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     </footer>
 </div>
 
-<div id="emptyError" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                姓名或手机号不能为空
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="phoneError" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-                手机号格式不正确
-            </div>
-        </div>
-    </div>
-</div>
+<!--<div id="emptyError" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"-->
+<!--     aria-labelledby="mySmallModalLabel">-->
+<!--    <div class="modal-dialog modal-sm">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span-->
+<!--                        aria-hidden="true">&times;</span></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                姓名或手机号不能为空-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!---->
+<!--<div id="phoneError" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog"-->
+<!--     aria-labelledby="mySmallModalLabel">-->
+<!--    <div class="modal-dialog modal-sm">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span-->
+<!--                        aria-hidden="true">&times;</span></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                手机号格式不正确-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.toaster.js"></script>
 <script>
     $(function () {
         //表单验证
         var phone_reg = /^(((13[0-9]{1})|(17[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
-        $("button[type='submit']").click(function () {
+        $("button[name='btnSubmit']").click(function () {
             if ($("input[name='name']").val() == '') {
-                $('#emptyError').modal('show');
+//                $('#emptyError').modal('show');
+                $.toaster({priority: 'info', title: '用户验证失败', message: '姓名不能为空.'});
                 return false;
             }
             if ($("input[name='phone']").val() == '') {
-                $('#emptyError').modal('show');
+                $.toaster({priority: 'info', title: '用户验证失败', message: '手机号不能为空.'});
                 return false;
             }
             if ($("input[name='company']").val() == '') {
-                alert("公司名称不能为空");
+                $.toaster({priority: 'info', title: '用户验证失败', message: '公司名称不能为空.'});
                 return false;
             }
+//            if ($("input[name='job']").val() == '') {
+//                $.toaster({priority: 'info', title: '用户验证失败', message: '职务不能为空.'});
+//                return false;
+//            }
             if (!phone_reg.test($("input[name='phone']").val())) {
-                $('#phoneError').modal('show');
+                $.toaster({priority: 'info', title: '用户验证失败', message: '手机号格式不正确.'});
                 return false;
             }
-            $("#userinfoForm").submit();
+            var isValidateUser = '<?php echo $isValidateUser ?>';
+            if (isValidateUser == "1") {
+                var activityId = $("input[name='activityId']").val();
+                var name = $("input[name='name']").val();
+                var phone = $("input[name='phone']").val();
+                $.ajax({
+                    "url": "ActivityFansController.php",
+                    "method": "get",
+                    "data": {
+                        "activityId": activityId,
+                        "name": name,
+                        "phone": phone
+                    },
+                    "dataType": "json",
+                    success: function (data) {
+                        if (data.isValid == true) {
+                            $("#userinfoForm").submit();
+                        } else {
+//                        alert("用户信息不存在.");
+                            $.toaster({priority: 'info', title: '用户验证失败', message: '用户不存在.'});
+                            return false;
+                        }
+                    },
+                    error: function () {
+                        $.toaster({priority: 'info', title: '用户验证失败', message: '用户不存在.'});
+//                    alert("用户信息不存在.");
+                        return false;
+                    }
+                });
+            } else {
+                $("#userinfoForm").submit();
+            }
         });
     });
 </script>

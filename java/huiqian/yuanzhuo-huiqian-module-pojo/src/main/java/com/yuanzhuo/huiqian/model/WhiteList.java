@@ -1,5 +1,7 @@
 package com.yuanzhuo.huiqian.model;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class WhiteList {
     private Integer id;
 
@@ -59,5 +61,10 @@ public class WhiteList {
 
     public void setFans(Fans fans) {
         this.fans = fans;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 }

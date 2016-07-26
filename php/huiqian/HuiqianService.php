@@ -144,9 +144,13 @@ function http_get_data($url)
     curl_setopt($ch, CURLOPT_URL, $url);
     ob_start();
     curl_exec($ch);
+    if (curl_errno($ch)) {
+        sleep(3);
+        http_get_data($url);
+    }
     $return_content = ob_get_contents();
     ob_end_clean();
-    $return_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
     return $return_content;
 }
 

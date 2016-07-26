@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.yuanzhuo.huiqian.dao.ActivityWinningListMapper;
 import com.yuanzhuo.huiqian.model.ActivityWinningList;
 import com.yuanzhuo.huiqian.service.ActivityWinningListService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,10 @@ public class ActivityWinningListServiceImpl extends BaseServiceImpl implements A
     @Override
     public List<ActivityWinningList> getWinningListByActivityId(int activityId) {
         return activityWinningListMapper.selectByActivityId(activityId);
+    }
+
+    @Override
+    public void deleteByActivityId(int activityId) {
+        activityWinningListMapper.deleteByRelationId(activityId);
     }
 }

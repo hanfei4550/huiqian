@@ -43,10 +43,11 @@ public class FansController {
     @ResponseBody
     @RequestMapping(value = "/page", method = RequestMethod.GET)
     public JsonResult queryFans(int activityId, String nick, @RequestParam(defaultValue = "0") int pageIndex, @RequestParam(defaultValue = "5") int pageSize) {
-        List<Fans> fansList = new ArrayList<Fans>();
+        Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
             nick = URLDecoder.decode(nick, "UTF-8");
-            fansList = fansService.getFansByParams(activityId, nick, pageIndex, pageSize);
+            List<Fans> fansList = fansService.getFansByParams(activityId, nick, pageIndex, pageSize);
+            int total = fansService.getTotalByParams(activityId, nick);
             List<WhiteList> whiteLists = whiteListService.getWhiteListByActivityId(activityId);
             List<Prize> prizes = prizeService.getPrizeByActivityId(activityId);
             for (Fans fans : fansList) {
@@ -54,13 +55,15 @@ public class FansController {
                 String prizeName = whiteListService.getPrize(prizes, whiteLists, activityId, fansId);
                 fans.setPrize(prizeName);
             }
+            resultMap.put("data", fansList);
+            resultMap.put("total", total);
             logger.info("粉丝信息列表:{}", fansList);
         } catch (BusinessException be) {
             logger.error("发生业务异常,异常信息:{}", be.getMessage());
         } catch (Exception e) {
             logger.error("发生系统异常,异常信息:{}", e.getMessage());
         }
-        return new JsonResult<Object>(fansList, "查询粉丝成功.", true);
+        return new JsonResult<Object>(resultMap, "查询粉丝成功.", true);
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)

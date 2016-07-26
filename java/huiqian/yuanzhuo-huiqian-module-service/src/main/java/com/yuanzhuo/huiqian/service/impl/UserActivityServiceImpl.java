@@ -23,4 +23,9 @@ public class UserActivityServiceImpl implements UserActivityService {
     public UserActivity getByActivityId(int activityId) {
         return userActivityMapper.selectByActivityId(activityId);
     }
+
+    @Override
+    public void deleteByActivityId(int activityId) {
+        userActivityMapper.deleteByRelationId(activityId);
+    }
 }

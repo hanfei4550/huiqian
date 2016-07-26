@@ -1,5 +1,6 @@
 package com.yuanzhuo.huiqian.service.impl;
 
+import com.yuanzhuo.huiqian.core.BusinessException;
 import com.yuanzhuo.huiqian.dao.FansMapper;
 import com.yuanzhuo.huiqian.model.Fans;
 import com.yuanzhuo.huiqian.model.UserActivityFans;
@@ -42,6 +43,14 @@ public class FansServiceImpl extends BaseServiceImpl implements FansService {
     }
 
     @Override
+    public int getTotalByParams(int activityId, String nick) throws Exception {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("activityId", activityId);
+        params.put("nick", nick);
+        return this.getTotal(FansMapper.class, "selectTotalByParams", params);
+    }
+
+    @Override
     public int getTotalByActivityId(int activityId) throws Exception {
         return this.getTotal(FansMapper.class, "selectTotalByActivityId", activityId);
     }
@@ -70,6 +79,21 @@ public class FansServiceImpl extends BaseServiceImpl implements FansService {
         whiteListService.deleteByActivityAndFans(activityId, fansId);
         userActivityFansService.deleteByActivityAndFans(activityId, fansId);
         return fansMapper.deleteByPrimaryKey(fansId);
+    }
+
+    @Override
+    public void deleteByActivityId(int activityId) {
+        fansMapper.deleteByRelationId(activityId);
+    }
+
+    @Override
+    public int saveFans(Fans fans) {
+        return fansMapper.insertSelective(fans);
+    }
+
+    @Override
+    public void deleteByActivityNo(String activityNo) {
+        fansMapper.deleteByActivityNo(activityNo);
     }
 
 

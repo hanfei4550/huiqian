@@ -18,4 +18,6 @@ public interface ActivityWinningListMapper {
     int updateByPrimaryKey(ActivityWinningList record);
 
     List<ActivityWinningList> selectByActivityId(int activityId);
+
+    void deleteByRelationId(int activityId);
 }

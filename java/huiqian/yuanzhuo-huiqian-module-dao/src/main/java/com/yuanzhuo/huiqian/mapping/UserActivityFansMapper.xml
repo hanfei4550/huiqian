@@ -24,7 +24,10 @@
   </delete>
     <delete id="deleteByParams">
         delete from t_activitycenter_user_activity_fans
-        where activity_id = #{activityId,jdbcType=INTEGER} and fans_id = #{fansId,jdbcType=INTEGER}
+        where activity_id = #{activityId,jdbcType=INTEGER}
+        <if test="fansId != null and fansId != 0">
+            and fans_id = #{fansId,jdbcType=INTEGER}
+        </if>
     </delete>
     <delete id="deleteByActivityNo" parameterType="java.lang.String">
     delete af from t_activitycenter_user_activity_fans af

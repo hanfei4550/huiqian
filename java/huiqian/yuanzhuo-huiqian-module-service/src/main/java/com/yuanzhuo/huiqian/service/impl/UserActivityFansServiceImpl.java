@@ -30,4 +30,16 @@ public class UserActivityFansServiceImpl implements UserActivityFansService {
         params.put("fansId", fansId);
         return userActivityFansMapper.deleteByParams(params);
     }
+
+    @Override
+    public void deleteByActivityId(int activityId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("activityId", activityId);
+        userActivityFansMapper.deleteByParams(params);
+    }
+
+    @Override
+    public void deleteByActivityNo(String activityNo) {
+        userActivityFansMapper.deleteByActivityNo(activityNo);
+    }
 }

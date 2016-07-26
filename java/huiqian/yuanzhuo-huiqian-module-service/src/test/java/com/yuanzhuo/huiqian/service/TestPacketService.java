@@ -47,7 +47,7 @@ public class TestPacketService {
 
     @Test
     public void testCreatePacket() {
-        List<Packet> packets = packetService.createPacket(16, 20);
+        List<Packet> packets = packetService.createPacket(19, 23);
         for (Packet packet : packets) {
             System.out.println("==================" + packet);
         }
@@ -56,9 +56,9 @@ public class TestPacketService {
     @Test
     public void testGetWXToken() {
         //1.会签token
-//        String token = WXUtil.getWXToken("wx613472cd2a425abd", "7c607d6e08247bd8a49d6d850703a059");
+        String token = WXUtil.getWXToken("wx613472cd2a425abd", "7c607d6e08247bd8a49d6d850703a059");
         //2.塞法特token
-        String token = WXUtil.getWXToken("wxc2ac43765ab8cb59", "955699e0ee98b95f113881deb4a16342");
+//        String token = WXUtil.getWXToken("wxc2ac43765ab8cb59", "955699e0ee98b95f113881deb4a16342");
         System.out.println("微信的token=================" + token);
     }
 
@@ -75,26 +75,26 @@ public class TestPacketService {
         //2.创建红包活动
         Calendar startTime = Calendar.getInstance();
         Calendar endTime = Calendar.getInstance();
-        endTime.set(Calendar.DATE, 25);
+        endTime.set(Calendar.DATE, 28);
         PacketActivityParam param = new PacketActivityParam();
-        param.setDesc("红包");
-        param.setJumpUrl("http://www.zfbcs.com/");
-        param.setKey("20fc54b237c02a09105df92a5fe4007d");
+        param.setDesc("菁英时代十周年");
+        param.setJumpUrl("http://www.elitimes.com/");
+        param.setKey("c67d590b016207100c809dfff683f0f3");
         param.setEndTime(endTime.getTime());
-        param.setMchId(1352683102);
+        param.setMchId(1351709401);
         param.setOnoff(1);
         param.setStartTime(startTime.getTime());
-        param.setTitle("红包");
-        param.setSponsorAppid("wxc2ac43765ab8cb59");
-        param.setTotal(520);
+        param.setTitle("菁英时代");
+        param.setSponsorAppid("wx613472cd2a425abd");
+        param.setTotal(36);
         param.setLogoUrl("http://www.huiqian.me/images/hongbao.png");
-        String lotteryId = packetService.createPacketActivity("HsOn5ZEqTMtAT808QTAzOVzLjlqZqVkHykO4FUY9-cVDOC215M6ET2IojTtL5cMONid_zK-0eixmUuFoXo5RWwYYXv0WbWIsGBHStEvq5yP2s5RMcrSTB2Ki0GGGx1mBBXDaAJAMIO", param);
+        String lotteryId = packetService.createPacketActivity("ZCqgalc8-HaAj_P8fTZF-_yDju5gj-u1MScicyr7USWD_ydJ4m7ZgHGB_UW_tWolTYtl_SLgwMdD3Lgtq7cznsWSg6zgnJXxOLUSlefo3es9VEFji-tLOmfbd2ImreqKGBJdAJABWE", param);
         System.out.println("红包活动ID=========" + lotteryId);
     }
 
     @Test
     public void testImportPackage() {
-        packetService.importPacket("HsOn5ZEqTMtAT808QTAzOVzLjlqZqVkHykO4FUY9-cVDOC215M6ET2IojTtL5cMONid_zK-0eixmUuFoXo5RWwYYXv0WbWIsGBHStEvq5yP2s5RMcrSTB2Ki0GGGx1mBBXDaAJAMIO", "_PuWn2FXigHY_CyWkKKFcw", 16);
+        packetService.importPacket("ZCqgalc8-HaAj_P8fTZF-_yDju5gj-u1MScicyr7USWD_ydJ4m7ZgHGB_UW_tWolTYtl_SLgwMdD3Lgtq7cznsWSg6zgnJXxOLUSlefo3es9VEFji-tLOmfbd2ImreqKGBJdAJABWE", "18rujhIzZ9nUEPMnp28Rog", 19);
     }
 
     @Test

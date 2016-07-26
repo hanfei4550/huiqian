@@ -20,12 +20,18 @@ function pageselectCallback(page_index, jq) {
                 if (result.success) {
                     $("#Searchresult").empty();
                     var content = "";
-                    if (result.data.length > 0) {
-                        $.each(result.data, function (i, fans) {
+                    $("#totalNum").html(result.data.total);
+                    if (result.data.data.length > 0) {
+                        $.each(result.data.data, function (i, fans) {
+                                var company = fans.company;
+                                if (company == null) {
+                                    company = "";
+                                }
                                 content += "<tr>";
                                 content += "<td>" + fans.nick + "</td>";
                                 content += "<td>" + fans.name + "</td>";
                                 content += "<td>" + fans.phone + "</td>";
+                                content += "<td>" + company + "</td>";
                                 content += "<td>" + fans.prize + "</td>";
                                 content += "<td>";
                                 content += "<button class='btn btn-default disabled'>";
@@ -67,7 +73,6 @@ $(document).ready(function () {
         prev_text: "前一页",
         next_text: "后一页"
     });
-
     $("#btnQuery").click(function () {
         pageselectCallback(0);
     });

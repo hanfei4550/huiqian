@@ -13,4 +13,6 @@ public interface ActivityWinningListService {
 
     List<ActivityWinningList> getWinningListByActivityId(int activityId);
 
+    void deleteByActivityId(int activityId);
+
 }

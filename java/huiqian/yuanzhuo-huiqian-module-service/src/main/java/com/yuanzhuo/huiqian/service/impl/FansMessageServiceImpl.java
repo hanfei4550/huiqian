@@ -24,4 +24,11 @@ public class FansMessageServiceImpl implements FansMessageService {
         params.put("fansId", fansId);
         return fansMessageMapper.deleteByParams(params);
     }
+
+    @Override
+    public void deleteByActivityId(int activityId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("activityId", activityId);
+        fansMessageMapper.deleteByParams(params);
+    }
 }

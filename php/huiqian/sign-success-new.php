@@ -16,13 +16,18 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     {
         $isshare = $_GET['isshare'];//存在
     }
+    if ($userInfo['activityId'] == "23") {
+        $title = "菁英时代";
+    } else {
+        $title = "会签";
+    }
 }
 ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>签到成功</title>
+    <title><?php echo $title ?></title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/sign-success-new1.css?t=20160505" rel="stylesheet">
     <style>

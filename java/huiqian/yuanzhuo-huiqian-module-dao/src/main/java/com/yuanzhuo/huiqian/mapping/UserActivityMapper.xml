@@ -25,6 +25,10 @@
     delete from t_usercenter_user_activity
     where id = #{id,jdbcType=INTEGER}
   </delete>
+    <delete id="deleteByRelationId" parameterType="java.lang.Integer">
+        delete from t_usercenter_user_activity
+        where activity_id = #{activityId,jdbcType=INTEGER}
+    </delete>
     <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.UserActivity">
     insert into t_usercenter_user_activity (id, user_id, activity_id
       )

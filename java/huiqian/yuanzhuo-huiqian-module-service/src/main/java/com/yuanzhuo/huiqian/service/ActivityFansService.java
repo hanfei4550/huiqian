@@ -8,4 +8,8 @@ import com.yuanzhuo.huiqian.model.ActivityFans;
 public interface ActivityFansService {
 
     int insert(ActivityFans activityFans);
+
+    ActivityFans getActivityFansByUserInfo(String activityId, String name, String phone);
+
+    void deleteByActivityId(String activityId);
 }

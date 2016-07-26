@@ -35,6 +35,20 @@
     </select>
 
     <!--根据用户Id查询用户的活动总数-->
+    <select id="selectTotalByParams" resultType="java.lang.Integer">
+        select
+        count(1)
+        from t_usercenter_fans a left join t_activitycenter_user_activity_fans b on a.id = b.fans_id
+        where 1=1
+        <if test="activityId != null">
+            and b.activity_id = #{activityId,jdbcType=INTEGER}
+        </if>
+        <if test="nick != null and nick != ''">
+            and a.nick like CONCAT('%',#{nick,jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <!--根据用户Id查询用户的活动总数-->
     <select id="selectTotalByActivityId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
     select
     count(1)
@@ -50,6 +64,11 @@
     <delete id="deleteByActivityNo" parameterType="java.lang.String">
     delete f from t_usercenter_fans f
     where f.id in (select af.fans_id from t_activitycenter_user_activity_fans af LEFT JOIN t_activitycenter_activity a on a.id = af.activity_id where a.activity_no=#{activityNo,jdbcType=VARCHAR})
+    </delete>
+
+    <delete id="deleteByRelationId" parameterType="java.lang.Integer">
+        delete f from t_usercenter_fans f
+        where f.id in (select af.fans_id from t_activitycenter_user_activity_fans af LEFT JOIN t_activitycenter_activity a on a.id = af.activity_id where a.id=#{activityId,jdbcType=INTEGER})
     </delete>
 
     <insert id="insert" parameterType="com.yuanzhuo.huiqian.model.Fans">

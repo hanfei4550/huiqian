@@ -16,4 +16,6 @@ public interface UserActivityMapper {
     int updateByPrimaryKeySelective(UserActivity record);
 
     int updateByPrimaryKey(UserActivity record);
+
+    void deleteByRelationId(int activityId);
 }

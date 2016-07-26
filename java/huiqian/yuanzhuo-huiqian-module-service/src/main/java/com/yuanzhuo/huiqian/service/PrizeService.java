@@ -14,4 +14,6 @@ public interface PrizeService {
     int savePrize(Prize prize);
 
     int deleteById(int id);
+
+    void deleteByActivityId(int activityId);
 }

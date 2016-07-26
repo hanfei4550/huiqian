@@ -14,6 +14,7 @@ if (is_array($_POST) && count($_POST) > 0)//判断是否有POST参数
     $name = "";
     $phone = "";
     $company = "";
+    $job = "";
     $nick = "";
     $userId = "";
     $activityId = "";
@@ -27,6 +28,9 @@ if (is_array($_POST) && count($_POST) > 0)//判断是否有POST参数
     }
     if (isset($_POST["company"])) {
         $company = $_POST['company'];
+    }
+    if (isset($_POST["job"])) {
+        $job = $_POST['job'];
     }
     if (isset($_POST["nick"])) {
         $nick = $_POST['nick'];
@@ -43,17 +47,16 @@ if (is_array($_POST) && count($_POST) > 0)//判断是否有POST参数
     if (isset($_POST["isValidateUser"])) {
         $isValidateUser = $_POST['isValidateUser'];
     }
-
     if ($name != "" && $phone != "" && $nick != "") {
         require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "FansService.php");
         $fansService = new FansService();
         if ($isValidateUser == $config['not_validate_user_flag']) {
-            $fansService->updateFans($name, $phone, $nick, $company);
+            $fansService->updateFans($name, $phone, $nick, $company, $job);
         } else {
             $fansArr = $fansService->getAllRegisterUserByActivity($activityId);
             if (in_array($name . ":" . $phone, $fansArr)) {
                 //保存用户信息到用户表中
-                $fansId = $fansService->insertFansWithNameAndPhone($nick, $headImage, $name, $phone, $company);
+                $fansId = $fansService->insertFansWithNameAndPhone($nick, $headImage, $name, $phone, $company, $job);
                 //获取用户的签到序号
                 $orderNum = $fansService->getUserCountByActivity($userId, $activityId);
                 //插入用户活动粉丝表

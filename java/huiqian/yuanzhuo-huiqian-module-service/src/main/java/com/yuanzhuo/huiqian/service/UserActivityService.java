@@ -9,4 +9,6 @@ public interface UserActivityService {
     int saveUserActivity(UserActivity userActivity);
 
     UserActivity getByActivityId(int activityId);
+
+    void deleteByActivityId(int activityId);
 }

@@ -5,6 +5,9 @@
  * Date: 2015-11-22
  * Time: 16:32
  */
+include('log4php/Logger.php');
+Logger::configure('log4php-config.xml');
+$log = Logger::getLogger('myLogger');
 if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 {
     $userId = "";
@@ -39,15 +42,43 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
             $fansService->insertFansMessage($fansId, $comment, $userId, $activityId);
         } else {
             $messageArray = $fansService->getRecentFansMessage($userId, $activityId);
+            $resultMessageArray = array();
             if (count($messageArray) > 0) {
                 foreach ($messageArray as $message) {
                     $id = $message["id"];
                     $fansService->updateFansMessage($id);
+                    $messageContent = urldecode($message['content']);
+                    $log->warn("消息内容:" . $messageContent);
+                    $log->warn("是否包含敏感词:" . is_contain_mingan_word($messageContent));
+                    if (!is_contain_mingan_word($messageContent)) {
+                        $resultMessageArray[] = $message;
+                    }
                 }
             }
-            $resultMessage = json_encode($messageArray);
+            $resultMessage = json_encode($resultMessageArray);
             echo urldecode($resultMessage);
         }
     }
 
+}
+
+function getMinganWords()
+{
+    $file_path = "mingan-words.txt";
+    $content = file_get_contents($file_path);
+    $array = explode("\n", $content);
+    return $array;
+}
+
+
+function is_contain_mingan_word($message)
+{
+    $minganwords = getMinganWords();
+    for ($i = 0; $i < count($minganwords); $i++) {
+        $position = strpos($message, $minganwords[$i]);
+        if (!$position === FALSE || $message === $minganwords[$i]) {
+            return true;
+        }
+    }
+    return false;
 }

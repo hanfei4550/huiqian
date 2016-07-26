@@ -46,6 +46,7 @@
         <th>粉丝昵称</th>
         <th>粉丝名称</th>
         <th>粉丝手机号</th>
+        <th>公司名称</th>
         <th>奖项</th>
         <th>操作</th>
     </tr>
@@ -66,6 +67,7 @@
     <%--</tbody>--%>
 </table>
 <div id="Pagination" class="pagination"></div>
+共<span id="totalNum"></span>条
 <div class="modal fade" id="fansModal" tabindex="-1" role="dialog" aria-labelledby="fansModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

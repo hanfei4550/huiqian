@@ -12,4 +12,8 @@ public interface UserActivityFansService {
     int saveUserActivityFans(UserActivityFans userActivityFans);
 
     int deleteByActivityAndFans(int activityId, int fansId);
+
+    void deleteByActivityId(int activityId);
+
+    void deleteByActivityNo(String activityNo);
 }

@@ -11,4 +11,6 @@ import java.util.List;
 public interface FansMessageService {
 
     int deleteMessageByActivityAndFans(int activityId, int fansId);
+
+    void deleteByActivityId(int activityId);
 }

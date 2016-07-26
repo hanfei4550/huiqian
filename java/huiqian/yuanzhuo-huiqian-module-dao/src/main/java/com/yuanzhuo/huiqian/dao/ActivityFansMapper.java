@@ -14,4 +14,8 @@ public interface ActivityFansMapper {
     int updateByPrimaryKeySelective(ActivityFans record);
 
     int updateByPrimaryKey(ActivityFans record);
+
+    ActivityFans selectBySelective(ActivityFans record);
+
+    void deleteByRelationId(String activityId);
 }

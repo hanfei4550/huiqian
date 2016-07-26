@@ -21,4 +21,6 @@ public interface WhiteListService {
     WhiteList getWhiteListByActivityAndFans(int activityId, int fansId);
 
     int deleteByActivityAndFans(int activityId, int fansId);
+
+    void deleteByActivityId(int activityId);
 }

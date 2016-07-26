@@ -69,12 +69,29 @@ public class ActivityController {
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveActivity(@ModelAttribute("model") ModelMap modelMap, ActivityVO activity, int memberId) {
+        logger.info("保存用户:{}的活动:{}数据.", memberId, activity);
         try {
             int activityId = activityService.saveActivity(activity);
             UserActivity userActivity = new UserActivity();
             userActivity.setUserId(memberId);
             userActivity.setActivityId(activityId);
             userActivityService.saveUserActivity(userActivity);
+            int total = activityService.getTotalByMemberId(memberId);
+            modelMap.addAttribute("memberId", memberId);
+            modelMap.addAttribute("total", total);
+        } catch (BusinessException be) {
+            logger.error("发生业务异常,异常信息:{}", be.getMessage());
+        } catch (Exception e) {
+            logger.error("发生系统异常,异常信息:{}", e.getMessage());
+        }
+        return "/activity/showActivity";
+    }
+
+    @RequestMapping(value = "/delete/{memberId}/{activityId}", method = RequestMethod.GET)
+    public String deleteActivity(@ModelAttribute("model") ModelMap modelMap, @PathVariable int memberId, @PathVariable int activityId) {
+        logger.info("删除活动:{}数据.", activityId);
+        try {
+            activityService.deleteActivityById(activityId);
             int total = activityService.getTotalByMemberId(memberId);
             modelMap.addAttribute("memberId", memberId);
             modelMap.addAttribute("total", total);
@@ -108,6 +125,7 @@ public class ActivityController {
 
     @RequestMapping("/setPrize/{activityId}/{fansId}")
     public String setPrize(@ModelAttribute("model") ModelMap modelMap, @PathVariable int activityId, @PathVariable int fansId) {
+        logger.info("设置活动:{},的粉丝:{}奖项数据.", activityId, fansId);
         try {
             Fans fans = fansService.getFansById(fansId);
             WhiteList whiteList = whiteListService.getWhiteListByActivityAndFans(activityId, fansId);
@@ -124,6 +142,7 @@ public class ActivityController {
 
     @RequestMapping("/savePrize")
     public String savePrize(@ModelAttribute("model") ModelMap modelMap, WhiteList whiteList) {
+        logger.info("设置活动白名单{}数据.", whiteList);
         try {
             if (whiteList.getId() == null) {
                 whiteListService.saveWhiteList(whiteList);
@@ -212,6 +231,7 @@ public class ActivityController {
     @ResponseBody
     @RequestMapping(value = "/clearWhiteList", method = RequestMethod.POST)
     public JsonResult clearWhiteList(@RequestParam int activityId, @RequestParam int fansId) {
+        logger.info("准备清除活动:{}的粉丝:{}白名单数据.", activityId, fansId);
         try {
             whiteListService.deleteByActivityAndFans(activityId, fansId);
         } catch (BusinessException be) {
@@ -225,6 +245,7 @@ public class ActivityController {
     @ResponseBody
     @RequestMapping(value = "/clearActivityByActivityNo/{activityNo}", method = RequestMethod.GET)
     public JsonResult clearActivityByActivityNo(@PathVariable String activityNo) {
+        logger.info("准备清除活动:{}的数据.", activityNo);
         try {
             activityService.deleteActivityDataByActivityNo(activityNo);
         } catch (BusinessException be) {
@@ -238,6 +259,7 @@ public class ActivityController {
     @ResponseBody
     @RequestMapping(value = "/saveActivityWinningList", method = RequestMethod.POST)
     public JsonResult saveActivityWinningList(String activityWinningList) {
+        logger.info("保存活动中奖名单列表:{}", activityWinningList);
         try {
             activityWinningListService.saveActivityWinningList(activityWinningList);
         } catch (BusinessException be) {

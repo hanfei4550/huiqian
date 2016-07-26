@@ -40,7 +40,7 @@ public class WXPacketUtil {
             //1.会签证书
 //          FileInputStream instream = new FileInputStream(new File("/Users/hanfei/Downloads/cert/apiclient_cert.p12"));
             //2.塞法特证书
-            FileInputStream instream = new FileInputStream(new File("/Users/hanfei/saifate/cert/apiclient_cert.p12"));
+            FileInputStream instream = new FileInputStream(new File("/Users/hanfei/huiqian-common/cert/apiclient_cert.p12"));
             keyStore.load(instream, mchId.toCharArray());
             instream.close();
             SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, mchId.toCharArray()).build();

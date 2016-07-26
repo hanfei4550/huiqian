@@ -31,4 +31,9 @@ public class PrizeServiceImpl implements PrizeService {
     public int deleteById(int id) {
         return prizeMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public void deleteByActivityId(int activityId) {
+        prizeMapper.deleteByRelationId(activityId);
+    }
 }

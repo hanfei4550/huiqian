@@ -25,4 +25,8 @@ public interface ActivityService {
     Activity getActivityByActivityNo(String activityNo);
 
     void deleteActivityDataByActivityNo(String activityNo);
+
+    void deleteActivityById(int activityId);
+
+    void recoverActivityDataByActivityNoAndFile(int userId, int activityId, String filePath);
 }

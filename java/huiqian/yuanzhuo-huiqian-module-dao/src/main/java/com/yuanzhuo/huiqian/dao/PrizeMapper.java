@@ -18,4 +18,6 @@ public interface PrizeMapper {
     int updateByPrimaryKeySelective(Prize record);
 
     int updateByPrimaryKey(Prize record);
+
+    void deleteByRelationId(int activityId);
 }

@@ -145,6 +145,9 @@ function pageselectCallback(page_index, jq) {
                                 content += "<button class='btn btn-default' onclick='window.location.href = \"" + HuiqianUtil.getWebRootPath() + "/prize/showPrize/" + activity.id + ".htmls\"'>";
                                 content += "设置奖项";
                                 content += "</button>&nbsp;&nbsp;";
+                                content += "<button class='btn btn-default' onclick='window.location.href = \"" + HuiqianUtil.getWebRootPath() + "/activity/delete/" + memberId + "/" + activity.id + ".htmls\"'>";
+                                content += "删除活动";
+                                content += "</button>&nbsp;&nbsp;";
                                 content += "</td>";
                                 content += "</tr>";
                             }

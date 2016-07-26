@@ -100,12 +100,12 @@ class FansService
         return $newId;
     }
 
-    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone, $company)
+    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone, $company, $job)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,company,create_time) values(?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
-        $stmt->bind_param('ssssss', $nick, $head_portraint, $name, $phone, $company, $head_portraint);
+        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,company,job,create_time) values(?,?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
+        $stmt->bind_param('sssssss', $nick, $head_portraint, $name, $phone, $company, $job, $head_portraint);
         $stmt->execute();
         $stmt->close();
         $newId = mysqli_insert_id($conn);
@@ -113,12 +113,12 @@ class FansService
         return $newId;
     }
 
-    function updateFans($name, $phone, $nick, $company)
+    function updateFans($name, $phone, $nick, $company, $job)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("update t_usercenter_fans set name=?,phone=?,company=? where nick=?");
-        $stmt->bind_param('ssss', $name, $phone, $company, $nick);
+        $stmt = $conn->prepare("update t_usercenter_fans set name=?,phone=?,company=?,job=? where nick=?");
+        $stmt->bind_param('sssss', $name, $phone, $company, $job, $nick);
         $stmt->execute();
         $stmt->close();
         $conn->close();
@@ -399,6 +399,23 @@ class FansService
             $picArray["nick"] = urlencode($nick);
             $picArray["picUrl"] = $head_portraint;
             $myArray[] = $picArray;
+        }
+        $stmt->close();
+        $conn->close();
+        return $myArray;
+    }
+
+    function getRegisterUserByParams($activityId, $name, $phone)
+    {
+        $myArray = array();
+        $connManager = new ConnectionService();
+        $conn = $connManager->getConnection();
+        $stmt = $conn->prepare("SELECT f.name,f.phone FROM t_activitycenter_fans as f WHERE f.activity_id=? and f.name=? and f.phone=?");
+        $stmt->bind_param('sss', $activityId, $name, $phone);
+        $stmt->execute();
+        $stmt->bind_result($name, $phone);
+        while ($stmt->fetch()) {
+            $myArray[] = $name . ":" . $phone;
         }
         $stmt->close();
         $conn->close();

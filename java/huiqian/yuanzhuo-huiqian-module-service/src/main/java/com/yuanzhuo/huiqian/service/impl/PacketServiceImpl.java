@@ -84,7 +84,7 @@ public class PacketServiceImpl implements PacketService {
                 params.put("auth_appid", Packet.authAppId);
                 params.put("total_amount", amount);
                 params.put("total_num", "1");
-                params.put("wishing", "恭喜发财");
+                params.put("wishing", "菁诚所至!菁十为开!");
                 params.put("act_name", "红包");
                 params.put("remark", "红包");
                 params.put("hb_type", "NORMAL");
@@ -96,6 +96,7 @@ public class PacketServiceImpl implements PacketService {
                 params.put("mch_billno", billNo);
                 String result = WXPacketUtil.hbpreorder(params);
                 if (StringUtils.isBlank(result)) {
+                    LOGGER.info("创建第几个红包失败:" + i);
                     continue;
                 }
                 try {
@@ -152,6 +153,7 @@ public class PacketServiceImpl implements PacketService {
         params.put("body", body.toJSONString());
         String resultStr = WXUtil.applyLotteryInfo(params);
         JSONObject result = JSONObject.parseObject(resultStr);
+        LOGGER.info("创建红包活动结果:" + result.toJSONString());
         int errcode = result.getIntValue("errcode");
         if (errcode == 0) {
             String lotteryId = result.getString("lottery_id");

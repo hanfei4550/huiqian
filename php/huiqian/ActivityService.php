@@ -43,16 +43,18 @@ class ActivityService
         date_default_timezone_set('UTC');
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT user_id,activity_id,banner,is_validate_user,is_danmu FROM t_usercenter_user_activity ua INNER JOIN t_activitycenter_activity a ON ua.activity_id=a.id WHERE a.activity_no = ?");
+        $stmt = $conn->prepare("SELECT user_id,activity_id,banner,is_validate_user,is_danmu,userinfo_url,signsuccess_url FROM t_usercenter_user_activity ua INNER JOIN t_activitycenter_activity a ON ua.activity_id=a.id WHERE a.activity_no = ?");
         $stmt->bind_param('s', $activityNo);
         $stmt->execute();
-        $stmt->bind_result($user_id, $activity_id, $banner, $is_validate_user, $is_danmu);
+        $stmt->bind_result($user_id, $activity_id, $banner, $is_validate_user, $is_danmu, $userinfo_url, $signsuccess_url);
         while ($stmt->fetch()) {
             $activityArray["user_id"] = $user_id;
             $activityArray["activity_id"] = $activity_id;
             $activityArray["banner"] = $banner;
             $activityArray["is_validate_user"] = $is_validate_user;
             $activityArray["is_danmu"] = $is_danmu;
+            $activityArray["userinfo_url"] = $userinfo_url;
+            $activityArray["signsuccess_url"] = $signsuccess_url;
         }
         $stmt->close();
         $conn->close();

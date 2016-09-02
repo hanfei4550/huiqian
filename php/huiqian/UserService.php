@@ -20,6 +20,7 @@ if (is_array($_POST) && count($_POST) > 0)//判断是否有POST参数
     $activityId = "";
     $headImage = "";
     $isValidateUser = "";
+    $openId = "";
     if (isset($_POST["name"])) {
         $name = $_POST['name'];
     }
@@ -46,6 +47,9 @@ if (is_array($_POST) && count($_POST) > 0)//判断是否有POST参数
     }
     if (isset($_POST["isValidateUser"])) {
         $isValidateUser = $_POST['isValidateUser'];
+    }
+    if (isset($_POST["openId"])) {
+        $openId = $_POST['openId'];
     }
     if ($name != "" && $phone != "" && $nick != "") {
         require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "FansService.php");
@@ -79,6 +83,8 @@ if (is_array($_POST) && count($_POST) > 0)//判断是否有POST参数
         $signResult['nick'] = urlencode($nick);
         $currentDate = date("Ymd");
         $signResult['headImage'] = $headImage;
+        $signResult['openid'] = $openId;
+        $signResult['fansId'] = $fansId;
         header($config[$env . '.' . 'sign_success_url'] . "?userInfo=" . json_encode($signResult));
         exit;
     }

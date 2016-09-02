@@ -40,6 +40,11 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         if ($comment != "") {
             $fansId = $fansService->getFansIdByNick($nick);
             $fansService->insertFansMessage($fansId, $comment, $userId, $activityId);
+			
+			if($activityId==30){
+					$fansService->insertFansMessage($fansId, $comment, $userId, 32);
+				}
+			
         } else {
             $messageArray = $fansService->getRecentFansMessage($userId, $activityId);
             $resultMessageArray = array();

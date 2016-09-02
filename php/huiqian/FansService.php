@@ -17,7 +17,11 @@ class FansService
         $currentDate = date("Ymd");
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("SELECT f.id,f.nick,f.head_portraint FROM t_activitycenter_user_activity_fans uaf INNER JOIN t_usercenter_fans f ON uaf.fans_id= f.id WHERE user_id=? AND activity_id=? and status=0 order by create_time asc limit 0,30");
+        if ($activityId == '15') {
+            $stmt = $conn->prepare("SELECT f.id,f.nick,f.head_portraint FROM t_activitycenter_user_activity_fans uaf INNER JOIN t_usercenter_fans f ON uaf.fans_id= f.id WHERE user_id=? AND activity_id=? and status=0 order by id asc limit 0,30");
+        } else {
+            $stmt = $conn->prepare("SELECT f.id,f.nick,f.head_portraint FROM t_activitycenter_user_activity_fans uaf INNER JOIN t_usercenter_fans f ON uaf.fans_id= f.id WHERE user_id=? AND activity_id=? and status=0 order by create_time asc limit 0,30");
+        }
         $stmt->bind_param('ss', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $head_portraint);
@@ -87,12 +91,12 @@ class FansService
         return $ucount;
     }
 
-    function insertFans($nick, $head_portraint)
+    function insertFans($nick, $head_portraint, $open_id)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,create_time) values(?,?,now()) ON DUPLICATE KEY UPDATE nick=?,head_portraint=?,create_time=now()");
-        $stmt->bind_param('ssss', $nick, $head_portraint, $nick, $head_portraint);
+        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,create_time,open_id) values(?,?,now(),?) ON DUPLICATE KEY UPDATE open_id=?,head_portraint=?,create_time=now()");
+        $stmt->bind_param('sssss', $nick, $head_portraint, $open_id, $open_id, $head_portraint);
         $stmt->execute();
         $stmt->close();
         $newId = mysqli_insert_id($conn);
@@ -100,12 +104,12 @@ class FansService
         return $newId;
     }
 
-    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone, $company, $job)
+    function insertFansWithNameAndPhone($nick, $head_portraint, $name, $phone, $company, $job, $openId)
     {
         $connManager = new ConnectionService();
         $conn = $connManager->getConnection();
-        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,company,job,create_time) values(?,?,?,?,?,?,now()) ON DUPLICATE KEY UPDATE head_portraint=?");
-        $stmt->bind_param('sssssss', $nick, $head_portraint, $name, $phone, $company, $job, $head_portraint);
+        $stmt = $conn->prepare("insert into t_usercenter_fans(nick,head_portraint,name,phone,company,job,create_time,open_id) values(?,?,?,?,?,?,now(),?) ON DUPLICATE KEY UPDATE head_portraint=?");
+        $stmt->bind_param('ssssssss', $nick, $head_portraint, $name, $phone, $company, $job, $openId, $head_portraint);
         $stmt->execute();
         $stmt->close();
         $newId = mysqli_insert_id($conn);
@@ -185,7 +189,7 @@ class FansService
         $stmt->bind_param('ss', $userId, $activityId);
         $stmt->execute();
         $stmt->bind_result($nick, $head_portraint);
-        $currentDate = date(Ymd);
+        $currentDate = date('Ymd');
         while ($stmt->fetch()) {
             $picArray["nick"] = urlencode($nick);
             $picArray["picUrl"] = $head_portraint;

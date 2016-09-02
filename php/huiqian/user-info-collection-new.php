@@ -7,6 +7,7 @@ $userId = "";
 $activityId = "";
 $headImage = "";
 $isValidateUser = "";
+$openId = "";
 if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 {
     if (isset($_GET["nick"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
@@ -28,6 +29,10 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     if (isset($_GET["isValidateUser"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
     {
         $isValidateUser = $_GET['isValidateUser'];//存在
+    }
+    if (isset($_GET["openId"]))//判断所需要的参数是否存在，isset用来检测变量是否设置，返回true or false
+    {
+        $openId = $_GET['openId'];//存在
     }
     if ($activityId == "23") {
         $title = "菁英时代";
@@ -145,6 +150,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
             <input type="hidden" name="activityId" value="<?php echo $activityId ?>"/>
             <input type="hidden" name="headImage" value="<?php echo $headImage ?>"/>
             <input type="hidden" name="isValidateUser" value="<?php echo $isValidateUser ?>"/>
+            <input type="hidden" name="openId" value="<?php echo $openId ?>"/>
         </form>
     </div>
     <footer class="text-center">

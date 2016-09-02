@@ -8,21 +8,32 @@ CHAT = {
     socket: null,
     username: null,
     headImage: null,
+    openid: null,
+    activityId: null,
     //提交聊天消息内容
     submit: function (obj) {
         this.socket.emit('message', obj);
         return false;
     },
-    init: function (username, headImage) {
+    init: function (username, headImage, openid, activityId) {
         var that = this;
         this.username = username;
         this.headImage = headImage;
+        this.openid = openid;
+        this.activityId = activityId;
 
         //连接websocket后端服务器
-        this.socket = io.connect('ws://www.hn-coffeecat.cn:3000');
+        this.socket = io.connect('ws://www.huiqian.me:3000');
 
         //告诉服务器端有用户登录
-        this.socket.emit('login', {userid: this.username, username: this.username});
+        this.socket.emit('login', {
+            userid: this.username,
+            username: this.username,
+            openid: this.openid,
+            activityId: this.activityId
+        });
+
+        this.socket.emit(this.activityId);
 
         //监听新用户登录
         this.socket.on('login', function (o) {
@@ -30,7 +41,7 @@ CHAT = {
         });
 
         this.socket.on('error', function () {
-            this.socket = io.connect('ws://www.hn-coffeecat.cn:3000');
+            this.socket = io.connect('ws://www.huiqian.me:3000');
         });
 
         //监听用户退出

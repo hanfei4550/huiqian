@@ -87,7 +87,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 </head>
 <body>
 <div class="container main-content">
-    <div id="mobileMessage" class="col-md-3 col-md-push-9 col-xs-8 col-xs-push-5">
+    <div id="mobileMessage" class="col-md-3 col-md-push-9 col-xs-7 col-xs-push-5">
     </div>
     <div class="sign-result-content">
         <div class="sign-result-space"></div>
@@ -117,7 +117,7 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     <div id="commentDiv" class="comment-content">
         <div class="row">
             <div class="col-md-2 col-md-push-4 col-xs-4 col-xs-push-1 btn-comment"><img class="img-responsive"
-                                                                                        src="images/sign-danmu-bg.png"
+                                                                                        src="images/sign-danmu-bg1.png"
                                                                                         onclick="openComment();"
                     />
             </div>
@@ -148,9 +148,11 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
 </div>
 
 <input type="hidden" id="nick" value="<?php echo $userInfo['nick'] ?>"/>
+<input type="hidden" id="openid" value="<?php echo $userInfo['openid'] ?>"/>
 <input type="hidden" id="headImage" value="<?php echo $userInfo['headImage'] ?>"/>
 <input type="hidden" id="userId" value="<?php echo $userInfo['userId'] ?>"/>
 <input type="hidden" id="activityId" value="<?php echo $userInfo['activityId'] ?>"/>
+<input type="hidden" id="fansId" value="<?php echo $userInfo['fansId'] ?>"/>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -175,7 +177,9 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         //setInterval(getMobileMessage, 5000);
         var nick = $("#nick").val();
         var headImage = $("#headImage").val();
-        CHAT.init(nick, headImage);
+        var openid = $("#openid").val();
+        var activityId = $("#activityId").val();
+        CHAT.init(nick, headImage, openid, activityId);
 
         var evt = "onorientationchange" in window ? "orientationchange" : "resize";
         window.addEventListener(evt, function () {
@@ -236,16 +240,20 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
             return false;
         }
         var nick = $("#nick").val();
+        var openid = $("#openid").val();
         var userId = $("#userId").val();
         var activityId = $("#activityId").val();
         var headImage = $("#headImage").val();
+        var fansId = $("#fansId").val();
         var obj = {
             encodeComment: encodeURIComponent(comment),
             comment: comment,
             nick: encodeURIComponent(nick),
             userId: userId,
             activityId: activityId,
-            headImage: headImage
+            headImage: headImage,
+            openid: openid,
+            fansId: fansId
         };
         CHAT.submit(obj);
         $("#comment").val("");

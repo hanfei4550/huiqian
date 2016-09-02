@@ -16,7 +16,6 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     $code = "";
     $state = "";
     $type = "";
-//    $is_danmu = "";
     $activity_no = "";
     if (isset($_GET["code"]))//微信网页授权之后传递的code
     {
@@ -26,10 +25,6 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
     {
         $state = $_GET['state'];//存在
     }
-//    if (isset($_GET["isdanmu"]))//判断是否是弹幕互动产品
-//    {
-//        $is_danmu = $_GET['isdanmu'];//存在
-//    }
     if (isset($_GET["activityno"]))//获取活动号
     {
         $activity_no = $_GET['activityno'];//存在
@@ -41,6 +36,8 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         $wxUtils = new WXUtils();
 
         $token_json = $wxUtils->getToken($code);
+
+        $openid = $token_json['openid'];
 
         $userinfo_json = $wxUtils->getUserInfo($token_json);
 
@@ -72,6 +69,8 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         $banner = $activityInfo['banner'];
         $isValidateUser = $activityInfo['is_validate_user'];
         $is_danmu = $activityInfo['is_danmu'];
+        $userinfo_url = $activityInfo['userinfo_url'];
+        $signsuccess_url = $activityInfo['signsuccess_url'];
         require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "FansService.php");
         $fansService = new FansService();
         $fansInfo = $fansService->getFansHeadPortraintByNick($nickname, $userId, $activityId);
@@ -79,60 +78,66 @@ if (is_array($_GET) && count($_GET) > 0)//判断是否有Get参数
         $fansId = $fansInfo['fansId'];
         $log->warn("用户头像:" . $headImage . ";用户ID:" . $fansId);
         $currentDate = date("Ymd");
+        $log->warn("用户的openId:" . $openid);
         if (empty($headImage)) {
-            //生成下载的文件名,并且将头像文件下载到本地
-            require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . "RandomUtils.php");
-            $randomUtils = new RandomUtils();
-            $headImage = $randomUtils->generate_random() . '.jpg';
-
-            $downloadDir = $config[$env . '.' . 'image_download_dir_prefix'] . $currentDate;
-            if (!is_dir($downloadDir)) {
-                mkdir($downloadDir);
-                chmod($downloadDir, 0777);
-            }
-
-            download_file_by_curl($headimgurl, $downloadDir . DIRECTORY_SEPARATOR . $headImage);
-
-            $headImageUrl = $config[$env . '.' . 'image_get_url_prefix'] . $currentDate . DIRECTORY_SEPARATOR . $headImage;
-
             if ($isValidateUser == $config['no_validate_user_flag']) {
                 //保存用户信息到用户表中
-                $fansId = $fansService->insertFans($nickname, $headImageUrl);
+                $fansId = $fansService->insertFans($nickname, $headimgurl, $openid);
 
                 //获取用户的签到序号
                 $orderNum = $fansService->getUserCountByActivity($userId, $activityId);
 
+
                 //插入用户活动粉丝表
                 $fansService->insertUserActivityFans($userId, $activityId, $fansId, $orderNum);
+
+                if ($activityId == 33) {
+                    $fansService->insertUserActivityFans($userId, 34, $fansId, $orderNum);
+                }
             }
             $log->warn("是否弹幕活动:" . $is_danmu);
             if ($is_danmu == "1") {
-                $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImageUrl, $config);
-                header($config[$env . '.' . 'sign_success_url'] . "?userInfo=" . json_encode($signResult));
+                $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headimgurl, $openid, $fansId);
+                if (empty($signsuccess_url)) {
+                    $signsuccess_url = $config[$env . '.' . 'sign_success_url'];
+                }
+                $log->warn("跳转的url地址:" . $signsuccess_url);
+                header("Location:" . $signsuccess_url . "?userInfo=" . json_encode($signResult));
                 exit;
             } else {
-                header($config[$env . '.' . 'userinfo_collect_url'] . "?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headImageUrl . "&banner=" . $banner . "&isValidateUser=" . $isValidateUser);
+                if (empty($userinfo_url)) {
+                    $userinfo_url = $config[$env . '.' . 'userinfo_collect_url'];
+                }
+                header("Location:" . $userinfo_url . "?userId=$userId&activityId=$activityId&nick=" . urlencode($nickname) . "&headImage=" . $headimgurl . "&banner=" . $banner . "&isValidateUser=" . $isValidateUser . "&openId=" . $openid);
                 exit;
             }
         } else {
+            //如果用户信息存在则更新用户的openid信息
+            $log->warn("用户的openId:" . $openid . ";用户昵称:" . $nickname . ";头像:" . $headImage);
+            $fansService->insertFans($nickname, $headImage, $openid);
             $orderNum = $fansService->getOrderNumByUser($userId, $activityId, $fansId);
-            $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config, $currentDate);
-            header($config[$env . '.' . 'sign_success_url'] . "?userInfo=" . json_encode($signResult));
+            $signResult = build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $openid, $fansId);
+            if (empty($signsuccess_url)) {
+                $signsuccess_url = $config[$env . '.' . 'sign_success_url'];
+            }
+            $log->warn("跳转的url地址:" . $signsuccess_url);
+            header("Location:" . $signsuccess_url . "?userInfo=" . json_encode($signResult));
             exit;
         }
     }
 }
 
 
-function build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $config)
+function build_userinfo($userId, $activityId, $orderNum, $nickname, $headImage, $openid, $fansId)
 {
-    $env = $config['env'];
     $signResult = array();
     $signResult['userId'] = $userId;
     $signResult['activityId'] = $activityId;
     $signResult['fansCount'] = $orderNum;
     $signResult['nick'] = urlencode($nickname);
     $signResult['headImage'] = $headImage;
+    $signResult['openid'] = $openid;
+    $signResult['fansId'] = $fansId;
     return $signResult;
 }
 
@@ -157,6 +162,9 @@ function http_get_data($url)
 function download_file_by_curl($file_url, $save_to)
 {
     $return_content = http_get_data($file_url);
+    if ($return_content === "") {
+        return "";
+    }
     $fp = @fopen($save_to, "a"); //将文件绑定到流
     fwrite($fp, $return_content); //写入文件
     fclose($fp);
